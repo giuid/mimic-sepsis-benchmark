@@ -1,0 +1,58 @@
+\section{Data and Problem Formulation}
+
+This section details the preprocessing pipeline, dataset configuration, and formulation of the missing data problem. We use the MIMIC-IV v3.1 dataset for benchmarking time-series imputation models, providing a standardized environment that aligns with clinical and architectural best practices.
+
+\subsection{Cohort and Feature Selection}
+The cohort was defined according to the following inclusion criteria:
+\begin{enumerate}
+    \item \textbf{Adult Patients:} Minimum age of 18 years at the time of ICU admission.
+    \item \textbf{Index Admission:} Only the first ICU stay of the first hospitalization for each patient was included to avoid data leakage and intra-patient correlation.
+    \item \textbf{Stay Duration:} ICU stays with a length between 48 and 500 hours were selected to ensure sufficient temporal information for modeling.
+\end{enumerate}
+
+A set of 17 key clinical variables was selected, encompassing vital signs and common laboratory tests as defined in standard benchmarks (SOTA configuration):
+\begin{itemize}
+    \item \textbf{Vital Signs:} Heart Rate, SBP, DBP, MBP, Respiratory Rate, SpO2, Temperature.
+    \item \textbf{Laboratory/Neurological:} GCS, Glucose, Creatinine, Bilirubin, BUN, WBC, Sodium, Potassium, Hematocrit, Bicarbonate.
+\end{itemize}
+
+\textbf{Previous Configuration vs. SOTA Configuration}: Prior experiments on a sparse feature set included loosely sampled laboratory values (e.g., Chloride, Platelets, Hemoglobin, Lactate). The current SOTA setup replaces these with frequently sampled and highly predictive variables like Mean Blood Pressure (MBP), Glasgow Coma Scale (GCS), Total Bilirubin, and Bicarbonate. This shift from a sparse, physiologically distinct set of variables to a denser set inherently changes the difficulty of the imputation problem, transitioning the regime from "low-data, high-independence" to "high-data, high-redundancy," impacting the relative utility of graph priors.
+
+\subsection{Preprocessing Pipeline}
+\paragraph{Time Binning and Aggregation:} Raw measurements were aggregated into 1-hour bins. For bins with multiple observations, the mean value was computed. This results in a sequence length of $T=48$ for the first 48 hours of each ICU stay.
+
+\paragraph{Window Inclusion Strategy:} A window is included if and only if it contains at least one observation across all 17 features, guaranteeing some ground truth to inform the model in every sample.
+
+\paragraph{Dataset Statistics:}
+\begin{itemize}
+    \item \textbf{Training samples:} 36,029
+    \item \textbf{Validation samples:} 7,721
+    \item \textbf{Test samples:} 7,721
+    \item \textbf{Total Features ($D$):} 17
+    \item \textbf{Temporal Steps ($T$):} 48
+    \item \textbf{Overall Observational Coverage:} $\sim 32.3\%$
+\end{itemize}
+The data was split at the patient level (70\% Train, 15\% Val, 15\% Test) to ensure evaluation measures inter-patient generalization.
+
+\subsection{Problem Formulation and Evaluation Metrics}
+Let $\mathbf{X} \in \mathbb{R}^{N \times T \times D}$ denote the ground truth data, $\hat{\mathbf{X}}$ the imputed data, and $\mathbf{M}$ the binary mask indicating missing values ($M_{i,t,d} = 1$ if the value is missing and imputed, and 0 otherwise). The evaluation is performed only on the artificially masked values (the test set). We employ a multi-dimensional metric framework:
+
+\paragraph{Point-wise Accuracy Metrics:}
+\begin{itemize}
+    \item \textbf{Mean Absolute Error (MAE):} $\frac{\sum_{i,t,d} M_{i,t,d} \cdot |x_{i,t,d} - \hat{x}_{i,t,d}|}{\sum_{i,t,d} M_{i,t,d}}$. Intuitively measures the average reconstruction error.
+    \item \textbf{Root Mean Squared Error (RMSE):} $\sqrt{\frac{\sum_{i,t,d} M_{i,t,d} \cdot (x_{i,t,d} - \hat{x}_{i,t,d})^2}{\sum_{i,t,d} M_{i,t,d}}}$. Penalizes larger "hallucinations," critical in intensive care settings.
+    \item \textbf{Mean Relative Error (MRE):} $\frac{\sum_{i,t,d} M_{i,t,d} \cdot |(x_{i,t,d} - \hat{x}_{i,t,d}) / x_{i,t,d}|}{\sum_{i,t,d} M_{i,t,d}}$. Normalizes error against the magnitude of the ground truth, balancing variables with vastly different scales (e.g., pH vs. Platelets).
+    \item \textbf{R2 Score:} Coefficient of determination; measures the proportion of variance predictable from independent variables. Higher is better.
+\end{itemize}
+
+\paragraph{Structural Consistency Metrics:}
+\begin{itemize}
+    \item \textbf{Element-wise Correlation Difference (ECD) / Correlation Error:} The mean absolute difference (or Frobenius norm) between the Pearson correlation matrix of the ground truth data ($\mathbf{C}_{GT}$) and the imputed data ($\mathbf{C}_{Imp}$). A low score indicates the model successfully preserves known physiological correlations and joint distributions.
+\end{itemize}
+
+\paragraph{Reliability and Calibration Metrics:}
+Beyond predictive accuracy, clinical utility depends on prognostic reliability. We utilize the \textbf{Expected Calibration Error (ECE)} to measure the alignment between a model's predicted probabilities and the actual outcome frequencies. The ECE is calculated by partitioning predictions into $M$ equally spaced bins ($B_1, \dots, B_M$) and computing the weighted average of the absolute difference between average confidence and accuracy within each bin:
+\begin{equation}
+    ECE = \sum_{m=1}^M \frac{|B_m|}{n} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|
+\end{equation}
+Lower ECE values indicate better calibration, implying that the model's confidence scores correspond more accurately to true clinical risk probabilities.

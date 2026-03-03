@@ -1,0 +1,91 @@
+# MIMIC-IV Sepsis Benchmark Configuration (REPLICA FEDELE Huang et al. 2025)
+mimic_root: "${oc.env:HOME}/Data/indus_data/physionet.org/files/mimiciv/3.1"
+processed_dir: "data/processed_sepsis"
+
+# 17 Variabili Longitudinali + Interventi
+vitals:
+  heart_rate: 220045
+  respiratory_rate: 220210
+  spo2: 220277
+  temperature: 223762
+  sbp: 220179
+  dbp: 220180
+  mbp: 220052
+
+labs:
+  glucose: 50931
+  lactate: 50813
+  creatinine: 50912
+  bilirubin: 50885
+  platelets: 51265
+  wbc: 51301
+  fio2: 223835
+  ph: 50820
+  pao2: 50821
+  paco2: 50818
+
+# GCS per SOFA e traiettoria
+gcs:
+  eye: 220739
+  verbal: 223900
+  motor: 223901
+
+# INTERVENTI CLINICI (Focus del benchmark)
+treatments:
+  vasopressors:
+    norepinephrine: 221906
+    epinephrine: 221289
+    vasopressin: 222315
+    phenylephrine: 221749
+    dopamine: 221662
+  ventilation:
+    - 223848 # Ventilator Type (Updated to existing ItemID)
+    - 226732 # O2 Delivery Device(s)
+  fluids:
+    - 225158 # NaCl 0.9%
+    - 225828 # LR
+    - 225943 # Solution
+
+# Parametri Sepsis-3
+sepsis:
+  lead_time_hours: 6
+  min_stay_hours: 48
+  max_stay_hours: 500
+  obs_window_start_rel: -24 # 24h prima dell'onset
+  obs_window_end_rel: 72    # 72h dopo l'onset
+
+# Feature names finali nel tensore
+feature_names:
+  - heart_rate
+  - respiratory_rate
+  - spo2
+  - temperature
+  - sbp
+  - dbp
+  - mbp
+  - glucose
+  - lactate
+  - creatinine
+  - bilirubin
+  - platelets
+  - wbc
+  - fio2
+  - ph
+  - pao2
+  - paco2
+  - gcs
+  - urine_output
+  - norepi_equiv      # Dose cumulativa/4h
+  - fluid_volume      # Volume cumulativo/4h
+  - vent_status       # Binario
+
+# KGI Configuration
+kgi_embedding_file: "medbert_relation_embeddings_sepsis.pkl"
+
+# AGGREGAZIONE TEMPORALE (BENCHMARK: 4h)
+time_step_hours: 4
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  seed: 42

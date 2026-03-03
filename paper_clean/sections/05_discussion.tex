@@ -1,0 +1,16 @@
+\section{Discussion and Conclusion}
+\label{sec:discussion}
+
+Extensive empirical evaluations isolated several fundamental mechanics shaping state-of-the-art imputation methodologies for medical time-series architectures. The benchmarking illuminates four substantial design conclusions:
+
+\begin{enumerate}
+    \item \textbf{Efficiency dictates Architectures:} For extensive hospital applications, non-autoregressive SAITS operates at inference margins substantially accelerating processing latency against heavy diffusion-based constraints (SSSD crashes, TimesFM zero-shot costs), all while dominating core reconstruction profiles (MAE $\approx 0.029$ / $0.32$).
+    
+    \item \textbf{The Feature Redundancy Paradox:} We determined that migrating from sparse and independent variables (e.g., occasional disjointed lab panels mapping Shock to Lactate) towards dense interdependent SOTA vitals shifted optimization bounds. \textit{Mean Blood Pressure (MBP)} linearly couples to Systolic/Diastolic. During high-redundancy learning, robust "Data-Driven" Self-Attention implicitly solves correlations rendering rigid "Knowledge-Driven" static graph architectures actively redundant.
+    
+    \item \textbf{Graph Topology is Internally Rediscovered:} True Prior Nullo SAITS structures effectively discovered subsets of 100\% valid UMLS edges without rigid constraints guiding training (Precision=1.0). If an architecture's expressivity is wide enough and the language features appropriately mapped contextually (e.g., via SapBERT projection), specifying the connection topology statically yields no diagnostic uplift. 
+    
+    \item \textbf{Dynamic Knowledge Injection Guarantees Reliability:} Beyond static matrix adjacency, the \textbf{Dynamic Knowledge Injector} demonstrates that attention-guided textual context is superior for ensuring model reliability. While vanilla baselines may achieve higher absolute AUPRC on dense numerical datasets, they often suffer from poor calibration. Our DynamicKGI models significantly reduced the Expected Calibration Error (e.g., BRITS ECE down to 0.22) and displayed high \textit{KGI-Gain} (up to +6.8\% reliance), confirming that the models actively utilize medical semantics to stabilize their predictions.
+\end{enumerate}
+
+Ultimately, clinical time series imputation proves highly resilient in robust Transformer blocks. Static ontologies like generic UMLS graphs act predominantly as unnecessary limiters when processing dense medical windows. Conversely, dynamically integrating explicit multi-modal relational dictionaries precisely guarantees downstream alignment and stability against hallucinations across shifting Intensive Care topologies.

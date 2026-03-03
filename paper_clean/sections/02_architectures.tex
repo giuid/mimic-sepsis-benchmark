@@ -1,0 +1,33 @@
+\section{Imputation Architectures}
+
+We evaluate and compare several imputation architectures spanning from naive baselines to deep learning models and advanced multi-modal Knowledge-Guided Imputation (KGI) regimes.
+
+\subsection{Standard and Deep Learning Baselines}
+\paragraph{Simple Baselines:} We use standard statistical methods such as Mean Imputation, Last Observation Carried Forward (LOCF), and Linear Interpolation.
+\paragraph{SAITS (Vanilla):} A non-autoregressive Transformer architecture utilizing a dual-block Diagonal Masked Self-Attention (DMSA) mechanism. It optimizes a weighted combination of Masked Imputation Task (MIT) and Observed Reconstruction Task (ORT) losses. SAITS operates efficiently in a data-driven environment.
+\paragraph{SSSD:} Combines Structured State Spaces (S4) with Conditional Diffusion. Uses 36 S4 layers with iterative denoising conditioned on observed paths.
+\paragraph{TimesFM 2.5:} A 200M parameter foundation model evaluated in a zero-shot capacity, pre-trained on diverse global time-series data.
+\paragraph{Other Deep Models:} We also include established models like BRITS (Bidirectional Recurrent Imputation), MRNN, and GP-VAE.
+
+\subsection{Knowledge-Guided Imputation (KGI) Strategies}
+In sparse data environments, data-driven approaches can struggle to capture physiological relationships (e.g., \textit{Hypoxia} causing \textit{Tachycardia}). By utilizing external medical ontology like UMLS (Unified Medical Language System), KGI introduces strong inductive biases. We explore two distinct paradigms of KGI: Graph-Based and Textual-Based.
+
+\subsubsection{Graph-Based Extractive Approach: SapBERT + CI-GNN}
+\paragraph{Feature Semantic Initialization:}
+Instead of initializing features (the graph nodes) randomly, we embed the textual name of variable $i$, $v_i$, using \textbf{SapBERT} (a language model trained on UMLS). The initial node embedding $h_i^{(0)} = W_{proj} \cdot \text{SapBERT}(v_i)$ provides initial semantic proximity (e.g., "Tachycardia" and "Heart Rate").
+
+\paragraph{Relational Prior ($P$) and Learned Adjacency Matrix ($A_{learn}$):}
+The initial structure of the graph is dictated by the shortest path length in UMLS: $P_{ij} = \frac{1}{1 + \text{dist}(i, j)}$. However, blindly trusting a static $P$ may force redundant linkages. Training initializes an adjacency matrix $A_{learn} \leftarrow P$.
+
+\paragraph{Graph Optimization and DAG Constraint:}
+$A_{learn}$ is optimized via backpropagation, regularized by a graph loss $L_{graph} = ||A_{learn} - P||_F + \lambda_{DAG} \cdot (\text{Tr}(e^{A_{learn}}) - d)$. The fidelity term restricts $A_{learn}$ to deviate from $P$ only if supported by evidence. The Causality Constraint pushes $\text{Tr}(e^{A_{learn}}) - d \rightarrow 0$, which mathematically eliminates cycles to shape the learned graph as a Directed Acyclic Graph (DAG), capturing causal connections rather than correlations.
+
+\paragraph{Parallel Gated Integration:}
+$A_{learn}$ can bias standard self-attention scores: $\text{Attention}(Q, K) = \text{Softmax}\left(\frac{Q K^T}{\sqrt{d}} + A_{learn}\right)$. This graph-biased attention was iterated into a Parallel Gated architecture, which isolates graph-driven reconstruction from temporal reconstruction, achieving reduced error.
+
+\subsubsection{Textual-Based Dynamic Approach: KGI-SAITS}
+By decoupling knowledge representation from static Graph Neural Networks (GNNs), textual KGI-SAITS directly diffuses semantic triplets via cross-attention.
+
+\paragraph{Early Semantics Injection:} Phase 1 projects the masked patient records alongside embeddings to yield a base latent tensor $\mathbf{H}_{base}$.
+\paragraph{Multimodal Fusion via MedBERT:} Instead of applying a static $P$ uniformly to all patients, a dynamic \texttt{TextualKnowledgeInjector} scans the observed variables of a specific patient. It queries MedBERT (768-D) to generate language representations of surviving medical triplets (e.g., \textit{``Infection causes High Lactate''}). 
+\paragraph{Cross-Attention Framework:} $\mathbf{H}_{base}$ acts as the Query (asking \textit{``What should the missing coordinates be?''}) while the textual semantics tensor $\mathbf{C}_{text}$ serves as the Key/Value repository. A customized Multi-Head Cross-Attention fuses the modalities dynamically. The network actively weighs real-time physiological rules extracted in text given individual observability shapes. The semantically enriched output then passes into the standard SAITS DMSA architecture to drive the ultimate imputation.

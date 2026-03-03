@@ -1,0 +1,47 @@
+--- Analysis 1: Semantic Types (TUIs) of Target Concepts ---
+         CUI                     Label   TUI                    Semantic Type
+1   C0005845                       BUN  T059             Laboratory Procedure
+2   C0008203                  Chloride  T196         Element, Ion, or Isotope
+3   C0010294                Creatinine  T109                 Organic Chemical
+4   C0010294                Creatinine  T123    Biologically Active Substance
+22  C0428883  Diastolic Blood Pressure  T201               Clinical Attribute
+5   C0017725                   Glucose  T109                 Organic Chemical
+6   C0017725                   Glucose  T121          Pharmacologic Substance
+7   C0017725                   Glucose  T123    Biologically Active Substance
+8   C0018810                Heart Rate  T201               Clinical Attribute
+9   C0018935                Hematocrit  T059             Laboratory Procedure
+10  C0019046                Hemoglobin  T116  Amino Acid, Peptide, or Protein
+11  C0019046                Hemoglobin  T123    Biologically Active Substance
+20  C0376261                   Lactate  T109                 Organic Chemical
+21  C0376261                   Lactate  T121          Pharmacologic Substance
+23  C0483415         Oxygen Saturation  T201               Clinical Attribute
+0   C0005821                 Platelets  T025                             Cell
+13  C0032821                 Potassium  T121          Pharmacologic Substance
+14  C0032821                 Potassium  T123    Biologically Active Substance
+15  C0032821                 Potassium  T196         Element, Ion, or Isotope
+19  C0231832          Respiratory Rate  T201               Clinical Attribute
+16  C0037473                    Sodium  T123    Biologically Active Substance
+17  C0037473                    Sodium  T196         Element, Ion, or Isotope
+24  C0871470   Systolic Blood Pressure  T201               Clinical Attribute
+18  C0039476               Temperature  T081             Quantitative Concept
+12  C0023516         White Blood Cells  T025                             Cell
+
+--- Analysis 2: Connectivity in MRREL ---
+                       Label  Total Edges    Relationship Types
+11                       BUN         1390  PAR, RN, RB, CHD, SY
+9                   Chloride          752   PAR, QB, AQ, RN, RB
+10                Creatinine         8630   PAR, RN, QB, AQ, RB
+2   Diastolic Blood Pressure          564  PAR, RN, RB, CHD, SY
+6                    Glucose        14502   PAR, QB, RN, RB, AQ
+0                 Heart Rate         2174   PAR, QB, AQ, RB, RN
+15                Hematocrit         1590   PAR, RN, QB, AQ, RB
+14                Hemoglobin         2846   PAR, RN, QB, RB, AQ
+16                   Lactate         1358  PAR, RN, RB, CHD, SY
+4          Oxygen Saturation          554   PAR, QB, RN, AQ, RB
+13                 Platelets         3388   PAR, RN, AQ, RB, QB
+7                  Potassium         3970   PAR, RN, QB, AQ, RB
+3           Respiratory Rate          828   PAR, QB, AQ, RB, RN
+8                     Sodium         3488   PAR, RN, QB, AQ, RB
+1    Systolic Blood Pressure          498  PAR, RN, RB, CHD, SY
+5                Temperature          620  PAR, RN, RB, CHD, SY
+12         White Blood Cells         9964   PAR, RN, QB, RB, AQ

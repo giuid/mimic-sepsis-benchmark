@@ -1,0 +1,17 @@
+# Core dependencies for mimic-iv-imputation-baselines
+torch>=2.1
+pytorch-lightning>=2.1
+hydra-core>=1.3
+omegaconf>=2.3
+pandas>=2.0
+numpy>=1.24
+pyarrow>=14.0
+scikit-learn>=1.3
+wandb>=0.16
+tensorboard>=2.15
+tqdm>=4.66
+einops>=0.7
+scipy>=1.11
+matplotlib>=3.8
+# Extra dependencies
+pyarrow

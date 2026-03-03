@@ -1,0 +1,15 @@
+name: mrnn
+rnn_hidden_size: 64
+
+use_kgi: false
+kgi_embedding_file: "medbert_relation_embeddings_sepsis.pkl"
+
+# Sepsis Task Parameters
+task_type: "binary"
+pos_weight: 5.5
+obs_steps: 2
+imp_weight: 0.1
+
+optimizer:
+  lr: 1e-3
+  weight_decay: 1e-5

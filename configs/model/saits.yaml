@@ -1,0 +1,43 @@
+# SAITS hyperparameters (Du et al., ESWA 2023)
+name: saits
+
+# Architecture
+d_model: 64
+d_inner: 128
+n_heads: 4
+d_k: 16
+d_v: 16
+n_layers: 3        # encoder layers per DMSA block
+n_dmsa_blocks: 2   # number of DMSA blocks
+dropout: 0.1
+activation: gelu
+embedding_type: vanilla # default: vanilla, bert, sapbert, or random
+use_kgi: false
+kgi_embedding_file: "medbert_relation_embeddings_sepsis.pkl"
+
+# Sepsis Task Parameters
+task_type: "binary"
+pos_weight: 5.5
+obs_steps: 2
+imp_weight: 0.1
+
+# Loss
+# Loss
+alpha: 0.8          # MIT weight; ORT weight = 1 - alpha
+graph_loss_weight: 1.0e-3 # Weight for GSL regularization (Reduced for robustness)
+use_prior_init: true   # Whether to init A with P (default: True)
+warmup_epochs: 20      # Linear warmup for graph loss (0 -> lambda)
+dag_loss_weight: 1.0e-1 # Weight for DAG constraint (Start small)
+
+# Optimizer
+optimizer:
+  name: adam
+  lr: 1.0e-3
+  weight_decay: 0.0
+
+# Scheduler
+scheduler:
+  name: reduce_on_plateau
+  factor: 0.5
+  patience: 10
+  min_lr: 1.0e-6

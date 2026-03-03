@@ -1,0 +1,232 @@
+itemid_a,itemid_b,label_a,label_b,relationship_path,final_sentence
+220045,220210,Heart Rate,Respiratory Rate,"is associated with Respiratory Function: Airway Patency, which is associated with","Clinical knowledge indicates that Heart Rate is associated with Respiratory Function: Airway Patency, which is associated with Respiratory Rate."
+220045,220277,Heart Rate,O2 saturation pulseoxymetry,is associated with,Clinical knowledge indicates that Heart Rate is associated with O2 saturation pulseoxymetry.
+220045,223762,Heart Rate,Temperature Celsius,is associated with,Clinical knowledge indicates that Heart Rate is associated with Temperature Celsius.
+220045,220179,Heart Rate,Non Invasive Blood Pressure systolic,is associated with,Clinical knowledge indicates that Heart Rate is associated with Non Invasive Blood Pressure systolic.
+220045,220180,Heart Rate,Non Invasive Blood Pressure diastolic,is associated with,Clinical knowledge indicates that Heart Rate is associated with Non Invasive Blood Pressure diastolic.
+220045,220052,Heart Rate,Arterial Blood Pressure mean,is associated with,Clinical knowledge indicates that Heart Rate is associated with Arterial Blood Pressure mean.
+220045,50931,Heart Rate,Glucose,is associated with,Clinical knowledge indicates that Heart Rate is associated with Glucose.
+220045,50813,Heart Rate,Lactate,is associated with,Clinical knowledge indicates that Heart Rate is associated with Lactate.
+220045,50912,Heart Rate,Creatinine,is associated with,Clinical knowledge indicates that Heart Rate is associated with Creatinine.
+220045,50885,Heart Rate,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Heart Rate is associated with Bilirubin, Total."
+220045,51265,Heart Rate,Platelet Count,is associated with,Clinical knowledge indicates that Heart Rate is associated with Platelet Count.
+220045,51301,Heart Rate,White Blood Cells,is associated with,Clinical knowledge indicates that Heart Rate is associated with White Blood Cells.
+220045,223835,Heart Rate,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Heart Rate is associated with Inspired O2 Fraction.
+220045,50820,Heart Rate,pH,is associated with,Clinical knowledge indicates that Heart Rate is associated with pH.
+220045,50821,Heart Rate,pO2,is associated with,Clinical knowledge indicates that Heart Rate is associated with pO2.
+220045,50818,Heart Rate,pCO2,is associated with,Clinical knowledge indicates that Heart Rate is associated with pCO2.
+220045,220739,Heart Rate,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Heart Rate is associated with Glasgow Coma Scale.
+220045,226559,Heart Rate,Urine Output,is associated with,Clinical knowledge indicates that Heart Rate is associated with Urine Output.
+220045,221906,Heart Rate,Norepinephrine,is associated with,Clinical knowledge indicates that Heart Rate is associated with Norepinephrine.
+220045,225158,Heart Rate,IV Fluids,is associated with,Clinical knowledge indicates that Heart Rate is associated with IV Fluids.
+220045,223848,Heart Rate,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Heart Rate is associated with Mechanical Ventilation.
+220210,220277,Respiratory Rate,O2 saturation pulseoxymetry,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with O2 saturation pulseoxymetry.
+220210,223762,Respiratory Rate,Temperature Celsius,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Temperature Celsius.
+220210,220179,Respiratory Rate,Non Invasive Blood Pressure systolic,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Non Invasive Blood Pressure systolic.
+220210,220180,Respiratory Rate,Non Invasive Blood Pressure diastolic,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Non Invasive Blood Pressure diastolic.
+220210,220052,Respiratory Rate,Arterial Blood Pressure mean,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Arterial Blood Pressure mean.
+220210,50931,Respiratory Rate,Glucose,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Glucose.
+220210,50813,Respiratory Rate,Lactate,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Lactate.
+220210,50912,Respiratory Rate,Creatinine,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Creatinine.
+220210,50885,Respiratory Rate,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Respiratory Rate is associated with Bilirubin, Total."
+220210,51265,Respiratory Rate,Platelet Count,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Platelet Count.
+220210,51301,Respiratory Rate,White Blood Cells,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with White Blood Cells.
+220210,223835,Respiratory Rate,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Inspired O2 Fraction.
+220210,50820,Respiratory Rate,pH,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with pH.
+220210,50821,Respiratory Rate,pO2,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with pO2.
+220210,50818,Respiratory Rate,pCO2,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with pCO2.
+220210,220739,Respiratory Rate,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Glasgow Coma Scale.
+220210,226559,Respiratory Rate,Urine Output,"is associated with Post-Procedure Recovery, which is associated with","Clinical knowledge indicates that Respiratory Rate is associated with Post-Procedure Recovery, which is associated with Urine Output."
+220210,221906,Respiratory Rate,Norepinephrine,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Norepinephrine.
+220210,225158,Respiratory Rate,IV Fluids,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with IV Fluids.
+220210,223848,Respiratory Rate,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Respiratory Rate is associated with Mechanical Ventilation.
+220277,223762,O2 saturation pulseoxymetry,Temperature Celsius,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Temperature Celsius.
+220277,220179,O2 saturation pulseoxymetry,Non Invasive Blood Pressure systolic,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Non Invasive Blood Pressure systolic.
+220277,220180,O2 saturation pulseoxymetry,Non Invasive Blood Pressure diastolic,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Non Invasive Blood Pressure diastolic.
+220277,220052,O2 saturation pulseoxymetry,Arterial Blood Pressure mean,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Arterial Blood Pressure mean.
+220277,50931,O2 saturation pulseoxymetry,Glucose,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Glucose.
+220277,50813,O2 saturation pulseoxymetry,Lactate,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Lactate.
+220277,50912,O2 saturation pulseoxymetry,Creatinine,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Creatinine.
+220277,50885,O2 saturation pulseoxymetry,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Bilirubin, Total."
+220277,51265,O2 saturation pulseoxymetry,Platelet Count,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Platelet Count.
+220277,51301,O2 saturation pulseoxymetry,White Blood Cells,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with White Blood Cells.
+220277,223835,O2 saturation pulseoxymetry,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Inspired O2 Fraction.
+220277,50820,O2 saturation pulseoxymetry,pH,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with pH.
+220277,50821,O2 saturation pulseoxymetry,pO2,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with pO2.
+220277,50818,O2 saturation pulseoxymetry,pCO2,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with pCO2.
+220277,220739,O2 saturation pulseoxymetry,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Glasgow Coma Scale.
+220277,226559,O2 saturation pulseoxymetry,Urine Output,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Urine Output.
+220277,221906,O2 saturation pulseoxymetry,Norepinephrine,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Norepinephrine.
+220277,225158,O2 saturation pulseoxymetry,IV Fluids,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with IV Fluids.
+220277,223848,O2 saturation pulseoxymetry,Mechanical Ventilation,is associated with,Clinical knowledge indicates that O2 saturation pulseoxymetry is associated with Mechanical Ventilation.
+223762,220179,Temperature Celsius,Non Invasive Blood Pressure systolic,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Non Invasive Blood Pressure systolic.
+223762,220180,Temperature Celsius,Non Invasive Blood Pressure diastolic,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Non Invasive Blood Pressure diastolic.
+223762,220052,Temperature Celsius,Arterial Blood Pressure mean,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Arterial Blood Pressure mean.
+223762,50931,Temperature Celsius,Glucose,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Glucose.
+223762,50813,Temperature Celsius,Lactate,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Lactate.
+223762,50912,Temperature Celsius,Creatinine,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Creatinine.
+223762,50885,Temperature Celsius,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Temperature Celsius is associated with Bilirubin, Total."
+223762,51265,Temperature Celsius,Platelet Count,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Platelet Count.
+223762,51301,Temperature Celsius,White Blood Cells,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with White Blood Cells.
+223762,223835,Temperature Celsius,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Inspired O2 Fraction.
+223762,50820,Temperature Celsius,pH,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with pH.
+223762,50821,Temperature Celsius,pO2,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with pO2.
+223762,50818,Temperature Celsius,pCO2,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with pCO2.
+223762,220739,Temperature Celsius,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Glasgow Coma Scale.
+223762,226559,Temperature Celsius,Urine Output,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Urine Output.
+223762,221906,Temperature Celsius,Norepinephrine,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Norepinephrine.
+223762,225158,Temperature Celsius,IV Fluids,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with IV Fluids.
+223762,223848,Temperature Celsius,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Temperature Celsius is associated with Mechanical Ventilation.
+220179,220180,Non Invasive Blood Pressure systolic,Non Invasive Blood Pressure diastolic,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Non Invasive Blood Pressure diastolic.
+220179,220052,Non Invasive Blood Pressure systolic,Arterial Blood Pressure mean,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Arterial Blood Pressure mean.
+220179,50931,Non Invasive Blood Pressure systolic,Glucose,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Glucose.
+220179,50813,Non Invasive Blood Pressure systolic,Lactate,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Lactate.
+220179,50912,Non Invasive Blood Pressure systolic,Creatinine,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Creatinine.
+220179,50885,Non Invasive Blood Pressure systolic,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Bilirubin, Total."
+220179,51265,Non Invasive Blood Pressure systolic,Platelet Count,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Platelet Count.
+220179,51301,Non Invasive Blood Pressure systolic,White Blood Cells,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with White Blood Cells.
+220179,223835,Non Invasive Blood Pressure systolic,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Inspired O2 Fraction.
+220179,50820,Non Invasive Blood Pressure systolic,pH,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with pH.
+220179,50821,Non Invasive Blood Pressure systolic,pO2,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with pO2.
+220179,50818,Non Invasive Blood Pressure systolic,pCO2,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with pCO2.
+220179,220739,Non Invasive Blood Pressure systolic,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Glasgow Coma Scale.
+220179,226559,Non Invasive Blood Pressure systolic,Urine Output,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Urine Output.
+220179,221906,Non Invasive Blood Pressure systolic,Norepinephrine,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Norepinephrine.
+220179,225158,Non Invasive Blood Pressure systolic,IV Fluids,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with IV Fluids.
+220179,223848,Non Invasive Blood Pressure systolic,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure systolic is associated with Mechanical Ventilation.
+220180,220052,Non Invasive Blood Pressure diastolic,Arterial Blood Pressure mean,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Arterial Blood Pressure mean.
+220180,50931,Non Invasive Blood Pressure diastolic,Glucose,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Glucose.
+220180,50813,Non Invasive Blood Pressure diastolic,Lactate,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Lactate.
+220180,50912,Non Invasive Blood Pressure diastolic,Creatinine,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Creatinine.
+220180,50885,Non Invasive Blood Pressure diastolic,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Bilirubin, Total."
+220180,51265,Non Invasive Blood Pressure diastolic,Platelet Count,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Platelet Count.
+220180,51301,Non Invasive Blood Pressure diastolic,White Blood Cells,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with White Blood Cells.
+220180,223835,Non Invasive Blood Pressure diastolic,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Inspired O2 Fraction.
+220180,50820,Non Invasive Blood Pressure diastolic,pH,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with pH.
+220180,50821,Non Invasive Blood Pressure diastolic,pO2,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with pO2.
+220180,50818,Non Invasive Blood Pressure diastolic,pCO2,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with pCO2.
+220180,220739,Non Invasive Blood Pressure diastolic,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Glasgow Coma Scale.
+220180,226559,Non Invasive Blood Pressure diastolic,Urine Output,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Urine Output.
+220180,221906,Non Invasive Blood Pressure diastolic,Norepinephrine,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Norepinephrine.
+220180,225158,Non Invasive Blood Pressure diastolic,IV Fluids,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with IV Fluids.
+220180,223848,Non Invasive Blood Pressure diastolic,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Non Invasive Blood Pressure diastolic is associated with Mechanical Ventilation.
+220052,50931,Arterial Blood Pressure mean,Glucose,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Glucose.
+220052,50813,Arterial Blood Pressure mean,Lactate,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Lactate.
+220052,50912,Arterial Blood Pressure mean,Creatinine,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Creatinine.
+220052,50885,Arterial Blood Pressure mean,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Bilirubin, Total."
+220052,51265,Arterial Blood Pressure mean,Platelet Count,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Platelet Count.
+220052,51301,Arterial Blood Pressure mean,White Blood Cells,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with White Blood Cells.
+220052,223835,Arterial Blood Pressure mean,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Inspired O2 Fraction.
+220052,50820,Arterial Blood Pressure mean,pH,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with pH.
+220052,50821,Arterial Blood Pressure mean,pO2,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with pO2.
+220052,50818,Arterial Blood Pressure mean,pCO2,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with pCO2.
+220052,220739,Arterial Blood Pressure mean,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Glasgow Coma Scale.
+220052,226559,Arterial Blood Pressure mean,Urine Output,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Urine Output.
+220052,221906,Arterial Blood Pressure mean,Norepinephrine,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Norepinephrine.
+220052,225158,Arterial Blood Pressure mean,IV Fluids,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with IV Fluids.
+220052,223848,Arterial Blood Pressure mean,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Arterial Blood Pressure mean is associated with Mechanical Ventilation.
+50931,50813,Glucose,Lactate,"is associated with (has tradename) Ionosol-MB, which is associated with (via has tradename)","Clinical knowledge indicates that Glucose is associated with (has tradename) Ionosol-MB, which is associated with (via has tradename) Lactate."
+50931,50912,Glucose,Creatinine,"is associated with (component of) Glucose/Creatinine [Measurement] in Urine, which is associated with (via divisor of)","Clinical knowledge indicates that Glucose is associated with (component of) Glucose/Creatinine [Measurement] in Urine, which is associated with (via divisor of) Creatinine."
+50931,50885,Glucose,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Glucose is associated with Bilirubin, Total."
+50931,51265,Glucose,Platelet Count,is associated with,Clinical knowledge indicates that Glucose is associated with Platelet Count.
+50931,51301,Glucose,White Blood Cells,"is associated with (component of) Glucose-6-Phosphate dehydrogenase:CCnc:Pt:WBC:Qn, which is associated with (via system of)","Clinical knowledge indicates that Glucose is associated with (component of) Glucose-6-Phosphate dehydrogenase:CCnc:Pt:WBC:Qn, which is associated with (via system of) White Blood Cells."
+50931,223835,Glucose,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Glucose is associated with Inspired O2 Fraction.
+50931,50820,Glucose,pH,is associated with,Clinical knowledge indicates that Glucose is associated with pH.
+50931,50821,Glucose,pO2,is associated with,Clinical knowledge indicates that Glucose is associated with pO2.
+50931,50818,Glucose,pCO2,is associated with,Clinical knowledge indicates that Glucose is associated with pCO2.
+50931,220739,Glucose,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Glucose is associated with Glasgow Coma Scale.
+50931,226559,Glucose,Urine Output,"is associated with urinalyses, which is associated with (related to)","Clinical knowledge indicates that Glucose is associated with urinalyses, which is associated with (related to) Urine Output."
+50931,221906,Glucose,Norepinephrine,"is associated with (via has contraindicated drug) Allergy, Drug, which is associated with (has contraindicated drug)","Clinical knowledge indicates that Glucose is associated with (via has contraindicated drug) Allergy, Drug, which is associated with (has contraindicated drug) Norepinephrine."
+50931,225158,Glucose,IV Fluids,is associated with,Clinical knowledge indicates that Glucose is associated with IV Fluids.
+50931,223848,Glucose,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Glucose is associated with Mechanical Ventilation.
+50813,50912,Lactate,Creatinine,"is a type of Chemicals, Organic, which is a category for","Clinical knowledge indicates that Lactate is a type of Chemicals, Organic, which is a category for Creatinine."
+50813,50885,Lactate,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Lactate is associated with Bilirubin, Total."
+50813,51265,Lactate,Platelet Count,is associated with,Clinical knowledge indicates that Lactate is associated with Platelet Count.
+50813,51301,Lactate,White Blood Cells,is associated with,Clinical knowledge indicates that Lactate is associated with White Blood Cells.
+50813,223835,Lactate,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Lactate is associated with Inspired O2 Fraction.
+50813,50820,Lactate,pH,is associated with,Clinical knowledge indicates that Lactate is associated with pH.
+50813,50821,Lactate,pO2,is associated with,Clinical knowledge indicates that Lactate is associated with pO2.
+50813,50818,Lactate,pCO2,is associated with,Clinical knowledge indicates that Lactate is associated with pCO2.
+50813,220739,Lactate,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Lactate is associated with Glasgow Coma Scale.
+50813,226559,Lactate,Urine Output,is associated with,Clinical knowledge indicates that Lactate is associated with Urine Output.
+50813,221906,Lactate,Norepinephrine,"is a type of Chemicals, Organic, which is a category for","Clinical knowledge indicates that Lactate is a type of Chemicals, Organic, which is a category for Norepinephrine."
+50813,225158,Lactate,IV Fluids,is associated with,Clinical knowledge indicates that Lactate is associated with IV Fluids.
+50813,223848,Lactate,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Lactate is associated with Mechanical Ventilation.
+50912,50885,Creatinine,"Bilirubin, Total",is associated with,"Clinical knowledge indicates that Creatinine is associated with Bilirubin, Total."
+50912,51265,Creatinine,Platelet Count,is associated with,Clinical knowledge indicates that Creatinine is associated with Platelet Count.
+50912,51301,Creatinine,White Blood Cells,is associated with,Clinical knowledge indicates that Creatinine is associated with White Blood Cells.
+50912,223835,Creatinine,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Creatinine is associated with Inspired O2 Fraction.
+50912,50820,Creatinine,pH,is associated with,Clinical knowledge indicates that Creatinine is associated with pH.
+50912,50821,Creatinine,pO2,is associated with,Clinical knowledge indicates that Creatinine is associated with pO2.
+50912,50818,Creatinine,pCO2,is associated with,Clinical knowledge indicates that Creatinine is associated with pCO2.
+50912,220739,Creatinine,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Creatinine is associated with Glasgow Coma Scale.
+50912,226559,Creatinine,Urine Output,"is associated with urinalyses, which is associated with (related to)","Clinical knowledge indicates that Creatinine is associated with urinalyses, which is associated with (related to) Urine Output."
+50912,221906,Creatinine,Norepinephrine,"is a type of Chemicals, Organic, which is a category for","Clinical knowledge indicates that Creatinine is a type of Chemicals, Organic, which is a category for Norepinephrine."
+50912,225158,Creatinine,IV Fluids,is associated with,Clinical knowledge indicates that Creatinine is associated with IV Fluids.
+50912,223848,Creatinine,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Creatinine is associated with Mechanical Ventilation.
+50885,51265,"Bilirubin, Total",Platelet Count,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with Platelet Count."
+50885,51301,"Bilirubin, Total",White Blood Cells,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with White Blood Cells."
+50885,223835,"Bilirubin, Total",Inspired O2 Fraction,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with Inspired O2 Fraction."
+50885,50820,"Bilirubin, Total",pH,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with pH."
+50885,50821,"Bilirubin, Total",pO2,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with pO2."
+50885,50818,"Bilirubin, Total",pCO2,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with pCO2."
+50885,220739,"Bilirubin, Total",Glasgow Coma Scale,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with Glasgow Coma Scale."
+50885,226559,"Bilirubin, Total",Urine Output,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with Urine Output."
+50885,221906,"Bilirubin, Total",Norepinephrine,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with Norepinephrine."
+50885,225158,"Bilirubin, Total",IV Fluids,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with IV Fluids."
+50885,223848,"Bilirubin, Total",Mechanical Ventilation,is associated with,"Clinical knowledge indicates that Bilirubin, Total is associated with Mechanical Ventilation."
+51265,51301,Platelet Count,White Blood Cells,is associated with,Clinical knowledge indicates that Platelet Count is associated with White Blood Cells.
+51265,223835,Platelet Count,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that Platelet Count is associated with Inspired O2 Fraction.
+51265,50820,Platelet Count,pH,is associated with,Clinical knowledge indicates that Platelet Count is associated with pH.
+51265,50821,Platelet Count,pO2,is associated with,Clinical knowledge indicates that Platelet Count is associated with pO2.
+51265,50818,Platelet Count,pCO2,is associated with,Clinical knowledge indicates that Platelet Count is associated with pCO2.
+51265,220739,Platelet Count,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Platelet Count is associated with Glasgow Coma Scale.
+51265,226559,Platelet Count,Urine Output,is associated with,Clinical knowledge indicates that Platelet Count is associated with Urine Output.
+51265,221906,Platelet Count,Norepinephrine,is associated with,Clinical knowledge indicates that Platelet Count is associated with Norepinephrine.
+51265,225158,Platelet Count,IV Fluids,is associated with,Clinical knowledge indicates that Platelet Count is associated with IV Fluids.
+51265,223848,Platelet Count,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Platelet Count is associated with Mechanical Ventilation.
+51301,223835,White Blood Cells,Inspired O2 Fraction,is associated with,Clinical knowledge indicates that White Blood Cells is associated with Inspired O2 Fraction.
+51301,50820,White Blood Cells,pH,is associated with,Clinical knowledge indicates that White Blood Cells is associated with pH.
+51301,50821,White Blood Cells,pO2,is associated with,Clinical knowledge indicates that White Blood Cells is associated with pO2.
+51301,50818,White Blood Cells,pCO2,is associated with,Clinical knowledge indicates that White Blood Cells is associated with pCO2.
+51301,220739,White Blood Cells,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that White Blood Cells is associated with Glasgow Coma Scale.
+51301,226559,White Blood Cells,Urine Output,is associated with,Clinical knowledge indicates that White Blood Cells is associated with Urine Output.
+51301,221906,White Blood Cells,Norepinephrine,is associated with,Clinical knowledge indicates that White Blood Cells is associated with Norepinephrine.
+51301,225158,White Blood Cells,IV Fluids,is associated with,Clinical knowledge indicates that White Blood Cells is associated with IV Fluids.
+51301,223848,White Blood Cells,Mechanical Ventilation,is associated with,Clinical knowledge indicates that White Blood Cells is associated with Mechanical Ventilation.
+223835,50820,Inspired O2 Fraction,pH,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with pH.
+223835,50821,Inspired O2 Fraction,pO2,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with pO2.
+223835,50818,Inspired O2 Fraction,pCO2,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with pCO2.
+223835,220739,Inspired O2 Fraction,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with Glasgow Coma Scale.
+223835,226559,Inspired O2 Fraction,Urine Output,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with Urine Output.
+223835,221906,Inspired O2 Fraction,Norepinephrine,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with Norepinephrine.
+223835,225158,Inspired O2 Fraction,IV Fluids,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with IV Fluids.
+223835,223848,Inspired O2 Fraction,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Inspired O2 Fraction is associated with Mechanical Ventilation.
+50820,50821,pH,pO2,is associated with,Clinical knowledge indicates that pH is associated with pO2.
+50820,50818,pH,pCO2,is associated with,Clinical knowledge indicates that pH is associated with pCO2.
+50820,220739,pH,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that pH is associated with Glasgow Coma Scale.
+50820,226559,pH,Urine Output,is associated with,Clinical knowledge indicates that pH is associated with Urine Output.
+50820,221906,pH,Norepinephrine,is associated with,Clinical knowledge indicates that pH is associated with Norepinephrine.
+50820,225158,pH,IV Fluids,is associated with,Clinical knowledge indicates that pH is associated with IV Fluids.
+50820,223848,pH,Mechanical Ventilation,is associated with,Clinical knowledge indicates that pH is associated with Mechanical Ventilation.
+50821,50818,pO2,pCO2,is associated with,Clinical knowledge indicates that pO2 is associated with pCO2.
+50821,220739,pO2,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that pO2 is associated with Glasgow Coma Scale.
+50821,226559,pO2,Urine Output,is associated with,Clinical knowledge indicates that pO2 is associated with Urine Output.
+50821,221906,pO2,Norepinephrine,is associated with,Clinical knowledge indicates that pO2 is associated with Norepinephrine.
+50821,225158,pO2,IV Fluids,is associated with,Clinical knowledge indicates that pO2 is associated with IV Fluids.
+50821,223848,pO2,Mechanical Ventilation,is associated with,Clinical knowledge indicates that pO2 is associated with Mechanical Ventilation.
+50818,220739,pCO2,Glasgow Coma Scale,is associated with,Clinical knowledge indicates that pCO2 is associated with Glasgow Coma Scale.
+50818,226559,pCO2,Urine Output,is associated with,Clinical knowledge indicates that pCO2 is associated with Urine Output.
+50818,221906,pCO2,Norepinephrine,is associated with,Clinical knowledge indicates that pCO2 is associated with Norepinephrine.
+50818,225158,pCO2,IV Fluids,is associated with,Clinical knowledge indicates that pCO2 is associated with IV Fluids.
+50818,223848,pCO2,Mechanical Ventilation,is associated with,Clinical knowledge indicates that pCO2 is associated with Mechanical Ventilation.
+220739,226559,Glasgow Coma Scale,Urine Output,is associated with,Clinical knowledge indicates that Glasgow Coma Scale is associated with Urine Output.
+220739,221906,Glasgow Coma Scale,Norepinephrine,is associated with,Clinical knowledge indicates that Glasgow Coma Scale is associated with Norepinephrine.
+220739,225158,Glasgow Coma Scale,IV Fluids,is associated with,Clinical knowledge indicates that Glasgow Coma Scale is associated with IV Fluids.
+220739,223848,Glasgow Coma Scale,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Glasgow Coma Scale is associated with Mechanical Ventilation.
+226559,221906,Urine Output,Norepinephrine,is associated with,Clinical knowledge indicates that Urine Output is associated with Norepinephrine.
+226559,225158,Urine Output,IV Fluids,is associated with,Clinical knowledge indicates that Urine Output is associated with IV Fluids.
+226559,223848,Urine Output,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Urine Output is associated with Mechanical Ventilation.
+221906,225158,Norepinephrine,IV Fluids,is associated with,Clinical knowledge indicates that Norepinephrine is associated with IV Fluids.
+221906,223848,Norepinephrine,Mechanical Ventilation,is associated with,Clinical knowledge indicates that Norepinephrine is associated with Mechanical Ventilation.
+225158,223848,IV Fluids,Mechanical Ventilation,is associated with,Clinical knowledge indicates that IV Fluids is associated with Mechanical Ventilation.

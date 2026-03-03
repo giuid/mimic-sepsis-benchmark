@@ -1,0 +1,165 @@
+Using 16bit Automatic Mixed Precision (AMP)
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+You are using a CUDA device ('NVIDIA A100-SXM4-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+/home/guido/miniconda3/lib/python3.13/site-packages/pytorch_lightning/utilities/_pytree.py:21: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+[34m
+████████╗██╗███╗   ███╗███████╗    ███████╗███████╗██████╗ ██╗███████╗███████╗    █████╗ ██╗
+╚══██╔══╝██║████╗ ████║██╔════╝    ██╔════╝██╔════╝██╔══██╗██║██╔════╝██╔════╝   ██╔══██╗██║
+   ██║   ██║██╔████╔██║█████╗█████╗███████╗█████╗  ██████╔╝██║█████╗  ███████╗   ███████║██║
+   ██║   ██║██║╚██╔╝██║██╔══╝╚════╝╚════██║██╔══╝  ██╔══██╗██║██╔══╝  ╚════██║   ██╔══██║██║
+   ██║   ██║██║ ╚═╝ ██║███████╗    ███████║███████╗██║  ██║██║███████╗███████║██╗██║  ██║██║
+   ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝    ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝  ╚═╝╚═╝
+ai4ts v0.0.3 - building AI for unified time-series analysis, https://time-series.ai [0m
+
+
+============================================================
+COMPREHENSIVE SOTA EVALUATION (TEST SET)
+============================================================
+
+Evaluating SapBERT...
+  Checkpoint: loss=0.3147.ckpt
+SAITS: Configuring 'sapbert' embeddings...
+  Loaded SapBERT from /home/guido/Data/indus_data/physionet.org/files/mimiciv/3.1/embeddings/sapbert_embeddings_17.npy
+  Loaded pre-computed Relational Prior for SapBERT
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.98it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4472, RMSE=0.6299
+
+Evaluating BERT (Generic)...
+  Checkpoint: loss=0.3160.ckpt
+SAITS: Configuring 'bert' embeddings...
+  Loaded BERT from /home/guido/Data/indus_data/physionet.org/files/mimiciv/3.1/embeddings/bert_embeddings_17.npy
+  Computing Relational Prior P from embeddings (Cosine Similarity)...
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.87it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4414, RMSE=0.6241
+
+Evaluating Random...
+  Checkpoint: loss=0.3148.ckpt
+SAITS: Configuring 'random' embeddings...
+  Initialized Random embeddings
+  Computing Relational Prior P from embeddings (Cosine Similarity)...
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.90it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4517, RMSE=0.6334
+
+Evaluating Vanilla...
+  Checkpoint: loss=0.3269.ckpt
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.85it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.3647, RMSE=0.5597
+
+Evaluating SapBERT (Prior Init)...
+  Checkpoint: loss=0.4748.ckpt
+SAITS: Configuring 'sapbert' embeddings...
+  Loaded SapBERT from /home/guido/Data/indus_data/physionet.org/files/mimiciv/3.1/embeddings/sapbert_embeddings_17.npy
+  Loaded pre-computed Relational Prior for SapBERT
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.89it/s  
+2026-02-19 16:14:35 [INFO]: No given device, using default device: cuda
+2026-02-19 16:14:35 [WARNING]: ‼️ saving_path not given. Model files and tensorboard file will not be saved.
+2026-02-19 16:14:35 [INFO]: Using customized MAE as the training loss function.
+2026-02-19 16:14:35 [INFO]: Using customized MSE as the validation metric function.
+2026-02-19 16:14:35 [INFO]: BRITS initialized with the given hyperparameters, the number of trainable parameters: 58,128
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.7415, RMSE=0.9539
+
+Evaluating BRITS...
+  Checkpoint: loss=0.1644.ckpt
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.82it/s  
+2026-02-19 16:14:47 [INFO]: No given device, using default device: cuda
+2026-02-19 16:14:47 [WARNING]: ‼️ saving_path not given. Model files and tensorboard file will not be saved.
+2026-02-19 16:14:47 [INFO]: Using customized RMSE as the training loss function.
+2026-02-19 16:14:47 [INFO]: Using customized MSE as the validation metric function.
+2026-02-19 16:14:47 [INFO]: MRNN initialized with the given hyperparameters, the number of trainable parameters: 27,815
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.5441, RMSE=0.7393
+
+Evaluating MRNN...
+  Checkpoint: loss=0.1016.ckpt
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.95it/s  
+2026-02-19 16:14:58 [INFO]: No given device, using default device: cuda
+2026-02-19 16:14:58 [WARNING]: ‼️ saving_path not given. Model files and tensorboard file will not be saved.
+2026-02-19 16:14:58 [INFO]: GPVAE initialized with the given hyperparameters, the number of trainable parameters: 74,961
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.7906, RMSE=0.9982
+
+Evaluating GP-VAE...
+  Checkpoint: loss=39343.2852.ckpt
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+GPVAE MAE error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 5.95it/s  
+  Result: MAE=0.0000, RMSE=0.0000
+
+Final Comparison Summary (Sorted by MAE):
+Model           | MAE      | RMSE    
+-----------------------------------
+Vanilla         | 0.3647   | 0.5597  
+BERT (Generic)  | 0.4414   | 0.6241  
+SapBERT         | 0.4472   | 0.6299  
+Random          | 0.4517   | 0.6334  
+BRITS           | 0.5441   | 0.7393  
+SapBERT (Prior Init) | 0.7415   | 0.9539  
+MRNN            | 0.7906   | 0.9982  
+GP-VAE          | 0.0000   | 0.0000  

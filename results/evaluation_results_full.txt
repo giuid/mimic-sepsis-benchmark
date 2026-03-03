@@ -1,0 +1,165 @@
+Using 16bit Automatic Mixed Precision (AMP)
+💡 Tip: For seamless cloud uploads and versioning, try installing [litmodels](https://pypi.org/project/litmodels/) to enable LitModelCheckpoint, which syncs automatically with the Lightning model registry.
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+You are using a CUDA device ('NVIDIA A100-SXM4-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+/home/guido/miniconda3/lib/python3.13/site-packages/pytorch_lightning/utilities/_pytree.py:21: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+[34m
+████████╗██╗███╗   ███╗███████╗    ███████╗███████╗██████╗ ██╗███████╗███████╗    █████╗ ██╗
+╚══██╔══╝██║████╗ ████║██╔════╝    ██╔════╝██╔════╝██╔══██╗██║██╔════╝██╔════╝   ██╔══██╗██║
+   ██║   ██║██╔████╔██║█████╗█████╗███████╗█████╗  ██████╔╝██║█████╗  ███████╗   ███████║██║
+   ██║   ██║██║╚██╔╝██║██╔══╝╚════╝╚════██║██╔══╝  ██╔══██╗██║██╔══╝  ╚════██║   ██╔══██║██║
+   ██║   ██║██║ ╚═╝ ██║███████╗    ███████║███████╗██║  ██║██║███████╗███████║██╗██║  ██║██║
+   ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝    ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝  ╚═╝╚═╝
+ai4ts v0.0.3 - building AI for unified time-series analysis, https://time-series.ai [0m
+
+
+=====================================================================================
+COMPREHENSIVE SOTA EVALUATION (TEST SET)
+=====================================================================================
+
+Evaluating SapBERT...
+  Checkpoint: loss=0.3122.ckpt
+SAITS: Configuring 'sapbert' embeddings...
+  Loaded SapBERT from /home/guido/Data/indus_data/physionet.org/files/mimiciv/3.1/embeddings/sapbert_embeddings_17.npy
+  Loaded pre-computed Relational Prior for SapBERT
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:09 • 0:00:00 6.22it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4458, RMSE=0.6288, MRE=2.2340, R2=0.6022, CorrErr=0.0935
+
+Evaluating BERT (Generic)...
+  Checkpoint: loss=0.3137.ckpt
+SAITS: Configuring 'bert' embeddings...
+  Loaded BERT from /home/guido/Data/indus_data/physionet.org/files/mimiciv/3.1/embeddings/bert_embeddings_17.npy
+  Computing Relational Prior P from embeddings (Cosine Similarity)...
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:09 • 0:00:00 6.04it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4422, RMSE=0.6240, MRE=2.1934, R2=0.6083, CorrErr=0.0877
+
+Evaluating Random...
+  Checkpoint: loss=0.3117.ckpt
+SAITS: Configuring 'random' embeddings...
+  Initialized Random embeddings
+  Computing Relational Prior P from embeddings (Cosine Similarity)...
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:09 • 0:00:00 6.04it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4479, RMSE=0.6293, MRE=2.2224, R2=0.6017, CorrErr=0.0930
+
+Evaluating Vanilla...
+  Checkpoint: loss=0.2982.ckpt
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 6.02it/s  
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.3440, RMSE=0.5306, MRE=1.7310, R2=0.7168, CorrErr=0.1296
+
+Evaluating SapBERT (Prior Init)...
+  Checkpoint: loss=0.3296.ckpt
+SAITS: Configuring 'sapbert' embeddings...
+  Loaded SapBERT from /home/guido/Data/indus_data/physionet.org/files/mimiciv/3.1/embeddings/sapbert_embeddings_17.npy
+  Loaded pre-computed Relational Prior for SapBERT
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:09 • 0:00:00 6.11it/s  
+2026-02-19 16:51:57 [INFO]: No given device, using default device: cuda
+2026-02-19 16:51:57 [WARNING]: ‼️ saving_path not given. Model files and tensorboard file will not be saved.
+2026-02-19 16:51:57 [INFO]: Using customized MAE as the training loss function.
+2026-02-19 16:51:57 [INFO]: Using customized MSE as the validation metric function.
+2026-02-19 16:51:57 [INFO]: BRITS initialized with the given hyperparameters, the number of trainable parameters: 58,128
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.4834, RMSE=0.6625, MRE=1.8966, R2=0.5586, CorrErr=0.1052
+
+Evaluating BRITS...
+  Checkpoint: loss=0.1625.ckpt
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 6.01it/s  
+2026-02-19 16:52:08 [INFO]: No given device, using default device: cuda
+2026-02-19 16:52:08 [WARNING]: ‼️ saving_path not given. Model files and tensorboard file will not be saved.
+2026-02-19 16:52:08 [INFO]: Using customized RMSE as the training loss function.
+2026-02-19 16:52:08 [INFO]: Using customized MSE as the validation metric function.
+2026-02-19 16:52:08 [INFO]: MRNN initialized with the given hyperparameters, the number of trainable parameters: 27,815
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=0.5344, RMSE=0.7303, MRE=1.7915, R2=0.4638, CorrErr=0.1303
+
+Evaluating MRNN...
+  Checkpoint: loss=0.1003.ckpt
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:09 • 0:00:00 6.08it/s  
+2026-02-19 16:52:19 [INFO]: No given device, using default device: cuda
+2026-02-19 16:52:19 [WARNING]: ‼️ saving_path not given. Model files and tensorboard file will not be saved.
+2026-02-19 16:52:19 [INFO]: GPVAE initialized with the given hyperparameters, the number of trainable parameters: 74,961
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  Result: MAE=9.9990, RMSE=9.9990, MRE=9.9990, R2=-9.9990, CorrErr=9.9990
+
+Evaluating GP-VAE...
+  Checkpoint: loss=39343.2266.ckpt
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(128, 1, 48, 17), target=(128, 48, 17), mask=(128, 48, 17)
+MAE Error: boolean index did not match indexed array along axis 1; size of axis is 1 but size of corresponding boolean axis is 48 | Shapes: pred=(41, 1, 48, 17), target=(41, 48, 17), mask=(41, 48, 17)
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61/61 0:00:10 • 0:00:00 6.08it/s  
+  Result: MAE=9.9990, RMSE=9.9990, MRE=9.9990, R2=-9.9990, CorrErr=0.0523
+
+===============================================================================================
+Model                | MAE ↓    | RMSE ↓   | MRE ↓    | R2 ↑     | Corr.Err ↓
+-----------------------------------------------------------------------------------------------
+Vanilla              | 0.3440   | 0.5306   | 1.7310   | 0.7168   | 0.1296    
+BERT (Generic)       | 0.4422   | 0.6240   | 2.1934   | 0.6083   | 0.0877    
+SapBERT              | 0.4458   | 0.6288   | 2.2340   | 0.6022   | 0.0935    
+Random               | 0.4479   | 0.6293   | 2.2224   | 0.6017   | 0.0930    
+SapBERT (Prior Init) | 0.4834   | 0.6625   | 1.8966   | 0.5586   | 0.1052    
+BRITS                | 0.5344   | 0.7303   | 1.7915   | 0.4638   | 0.1303    
+MRNN                 | 9.9990   | 9.9990   | 9.9990   | -9.9990  | 9.9990    
+GP-VAE               | 9.9990   | 9.9990   | 9.9990   | -9.9990  | 0.0523    

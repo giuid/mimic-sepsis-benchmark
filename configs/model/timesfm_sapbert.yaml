@@ -1,0 +1,11 @@
+name: timesfm_sapbert
+model_id: google/timesfm-2.5-200m-pytorch
+lr: 1e-5
+weight_decay: 1e-5
+use_graph_layer: true
+embedding_type: sapbert
+graph_loss_weight: 0.1
+
+optimizer:
+  lr: ${model.lr}
+  weight_decay: ${model.weight_decay}

@@ -1,0 +1,144 @@
+
+\section{Evaluation Metrics}
+
+To comprehensively assess the performance of the proposed SapBERT + CI-GNN model against baseline methods, we employ a multi-dimensional evaluation strategy. Given the safety-critical nature of medical time-series imputation, it is insufficient to rely solely on global accuracy; we must also verify the preservation of clinical relationships and the model's robustness against scale heterogeneity.
+
+Let $\mathbf{X} \in \mathbb{R}^{N \times T \times D}$ denote the ground truth data, $\hat{\mathbf{X}}$ the imputed data, and $\mathbf{M}$ the binary mask indicating the missing values (where $M_{i,t,d} = 1$ if the value is missing and imputed, and 0 otherwise). The evaluation is performed only on the artificially masked values (the test set).
+
+\subsection{Point-wise Accuracy Metrics}
+
+These metrics evaluate the proximity of the imputed values to the ground truth, treating each missing entry independently.
+
+\paragraph{Mean Absolute Error (MAE)}
+The Mean Absolute Error measures the average magnitude of errors in the set of predictions, without considering their direction. It provides a linear representation of the error and is robust to outliers.
+\begin{equation}
+    \text{MAE} = \frac{\sum_{i,t,d} M_{i,t,d} \cdot |x_{i,t,d} - \hat{x}_{i,t,d}|}{\sum_{i,t,d} M_{i,t,d}}
+\end{equation}
+\textbf{Clinical Rationale:} MAE provides an intuitive measure of the average reconstruction error (e.g., how many bpm the heart rate prediction deviates on average).
+
+\paragraph{Root Mean Squared Error (RMSE)}
+The Root Mean Squared Error represents the quadratic mean of the differences. Unlike MAE, RMSE penalizes larger errors more severely due to the squaring term.
+\begin{equation}
+    \text{RMSE} = \sqrt{\frac{\sum_{i,t,d} M_{i,t,d} \cdot (x_{i,t,d} - \hat{x}_{i,t,d})^2}{\sum_{i,t,d} M_{i,t,d}}}
+\end{equation}
+\textbf{Clinical Rationale:} In an Intensive Care Unit (ICU) setting, large imputation errors (e.g., confusing a normal blood pressure with a hypertensive crisis) can lead to fatal decision-making errors. A low RMSE indicates that the model avoids catastrophic "hallucinations."
+
+\paragraph{Mean Relative Error (MRE)}
+Clinical variables exhibit vastly different scales (e.g., Lactate $\in [0.5, 15]$ vs. Platelets $\in [150, 400]$). Absolute metrics (MAE/RMSE) are dominated by variables with larger magnitudes. MRE normalizes the error relative to the true value:
+\begin{equation}
+    \text{MRE} = \frac{\sum_{i,t,d} M_{i,t,d} \cdot \left| \frac{x_{i,t,d} - \hat{x}_{i,t,d}}{x_{i,t,d}} \right|}{\sum_{i,t,d} M_{i,t,d}}
+\end{equation}
+\textbf{Clinical Rationale:} This metric ensures that the model is evaluated fairly across all features, preventing high-magnitude variables (like Glucose) from masking poor performance on low-magnitude but critical variables (like pH).
+
+\paragraph{R2 Score (Coefficient of Determination)} Represents the proportion of variance in the dependent variable that is predictable from the independent variables. An R2 of 1.0 indicates perfect prediction, while 0.0 indicates a model that just predicts the mean. Negative values indicate performance worse than a simple mean predictor. Higher is better.
+
+\subsection{Structural Consistency Metrics}
+
+Since the proposed CI-GNN module is designed to capture inter-variable dependencies via the Adjacency Matrix $A_{learn}$, it is crucial to verify if the imputed data respects known physiological correlations.
+
+\paragraph{Element-wise Correlation Difference (ECD)}
+We compute the Pearson correlation matrix for the ground truth data ($\mathbf{C}_{GT}$) and the imputed data ($\mathbf{C}_{Imp}$). The ECD is defined as the Frobenius norm of their difference:
+\begin{equation}
+    \text{ECD} = || \mathbf{C}_{GT} - \mathbf{C}_{Imp} ||_F
+\end{equation}
+\textbf{Scientific Justification:} A low ECD score indicates that the model has successfully learned the joint distribution of the variables. For instance, if \textit{Lactate} and \textit{pH} are negatively correlated in reality, a valid imputation model must preserve this relationship. This metric directly validates the contribution of the Graph Neural Network component.
+\section{Approaches}
+
+\subsection{SapBERT + CI-GNN on SAITS}
+
+\subsubsection{Feature initialization}
+
+Before analyzing the medical data of the patients, the model must understand the inherent meaning of variables.
+\paragraph{Process:} Instead of initializing the features (graph's nodes) with random values, we use \textbf{SapBERT}, an LM pre-trained on millions of medical entities from UMLS (Unified Medical Language System) 
+
+
+\paragraph{Mathematical Formulation:} Let $v_i$ be the textual name of variable $i$ (e.g., "Oxygen Saturation"). The initial node embedding $h_i^{(0)}$ is defined as:
+
+\begin{equation}
+h_i^{(0)} = W_{proj} \cdot \text{SapBERT}(v_i)
+\end{equation}
+
+\paragraph{Rationale:} This approach injects \textbf{semantic meaning} into the system. The model already "knows," prior to training, that concepts such as "Tachycardia" and "Heart Rate" are close in the vector space, accelerating learning from the very first steps.
+
+\subsubsection{The Relational Prior ($P$): The Medical Map}
+
+In this phase, the initial structure of the graph is defined based on established medical knowledge (UMLS). The goal is to construct a matrix that quantifies the medical proximity between two concepts $A$ and $B$.
+
+\paragraph{The Formula:}
+\begin{equation}
+P_{ij} = \frac{1}{1 + \text{dist}(i, j)}
+\end{equation}
+
+Where $\text{dist}(i, j)$ represents the shortest weighted path in the UMLS graph:
+\begin{itemize}
+    \item If $i$ and $j$ are identical, $\text{dist} = 0 \implies P_{ij} = 1$.
+    \item If $i$ and $j$ are unrelated (e.g., "Foot fracture" and "Glaucoma"), $\text{dist}$ is high $\implies P_{ij} \approx 0$.
+\end{itemize}
+
+The result $P$ is a \textbf{static matrix} that acts as a knowledge "anchor."
+
+\subsubsection{Learned Adjacency Matrix ($A_{learn}$) and DAG Constraint}
+
+The core of CI-GNN lies in not blindly trusting static knowledge ($P$), but rather allowing the model to learn true relationships from actual clinical data.
+
+\paragraph{Initialization:}
+\begin{equation}
+A_{learn} \leftarrow P
+\end{equation}
+At the beginning of training, the graph topology coincides with medical knowledge.
+
+\paragraph{Graph Loss Function ($L_{graph}$):}
+During training, $A_{learn}$ is optimized via backpropagation, adhering to two fundamental constraints defined by the loss function:
+
+\begin{equation}
+L_{graph} = \underbrace{||A_{learn} - P||_F}_{\text{Fidelity Term}} + \lambda_{DAG} \cdot \underbrace{(\text{Tr}(e^{A_{learn}}) - d)}_{\text{Causality Constraint}}
+\end{equation}
+
+\begin{enumerate}
+    \item \textbf{Fidelity Term ($||\dots||_F$):} This uses the Frobenius Norm to prevent $A_{learn}$ from deviating too far from $P$. Connections not supported by medical literature are penalized unless strongly justified by the data.
+    \item \textbf{Causality Constraint (DAG):} This utilizes the \textit{DAG-GNN} approach to make the acyclicity property differentiable. If $\text{Tr}(e^{A_{learn}}) - d = 0$, the graph is a \textbf{DAG} (Directed Acyclic Graph), forcing the learning of causal relationships ($A \to B$) rather than simple correlations.
+\end{enumerate}
+
+\subsubsection{Adaptive Spatial Attention}
+
+The learned adjacency matrix $A_{learn}$ is integrated into the Transformer's attention mechanism to process patient data.
+
+\paragraph{Standard Attention:}
+\begin{equation}
+\text{Softmax}\left(\frac{Q K^T}{\sqrt{d}}\right)
+\end{equation}
+
+\paragraph{Proposed Attention (Graph-Biased):}
+\begin{equation}
+\text{Attention}(Q, K) = \text{Softmax}\left(\frac{Q K^T}{\sqrt{d}} + A_{learn}\right)
+\end{equation}
+
+By adding $A_{learn}$ to the raw attention scores, the model is forced to prioritize variables that have a strong causal link, ensuring robustness even in the presence of noisy or missing data.
+
+\subsubsection{Example: Lactate Imputation}
+
+Consider a case of a missing value (NaN) for Lactate, with Oxygen Saturation at 92\% and pH at 7.3. Thanks to the $A_{learn}$ graph, the model recognizes that:
+\begin{itemize}
+    \item Lactate $\leftarrow$ Hypoxia (Low O2 Saturation).
+    \item Lactate $\to$ Acidosis (Low pH).
+\end{itemize}
+During the attention calculation phase, the weights for O2 and pH receive a massive boost, allowing for a clinically plausible reconstruction of the missing value.
+
+\subsection{Appendix: Explanation of the $\text{Tr}(e^A) - d = 0$ Constraint}
+
+Why does the trace of the matrix exponential guarantee the absence of cycles?
+
+\begin{enumerate}
+    \item \textbf{Matrix Powers:} The elements of $A^k$ indicate the number of paths of length $k$ between nodes. A cycle exists if an element on the diagonal $(i, i)$ of $A^k$ is $>0$.
+    \item \textbf{The Trace:} $\text{Tr}(A^k)$ counts the total number of closed cycles of length $k$ in the graph.
+    \item \textbf{Series Expansion:} The matrix exponential is defined as:
+    \begin{equation}
+    e^A = I + A + \frac{A^2}{2!} + \frac{A^3}{3!} + \dots
+    \end{equation}
+    \item \textbf{The Constraint:} Calculating the trace:
+    \begin{equation}
+    \text{Tr}(e^A) = \text{Tr}(I) + \text{Tr}(A) + \frac{1}{2!}\text{Tr}(A^2) + \dots = d + \sum (\text{weighted cycles})
+    \end{equation}
+\end{enumerate}
+
+By subtracting $d$ (the number of nodes, derived from the trace of the identity matrix $I$), we obtain a measure of the graph's "cyclicity." Minimizing this term to zero mathematically equates to eliminating every cycle of any length, rendering the graph a DAG in a differentiable manner.

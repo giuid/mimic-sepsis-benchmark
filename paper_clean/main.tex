@@ -1,0 +1,33 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+\geometry{margin=2.5cm}
+
+\title{Technical Report: Multimodal Knowledge-Guided Imputation for Medical Time-Series}
+\author{AI Research Assistant}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report details the implementation and comparative evaluation of state-of-the-art time-series imputation models on the MIMIC-IV clinical dataset. We present a comprehensive benchmarking of deep learning baselines, knowledge-guided imputation (KGI) methods, and our proposed multimodal dynamic textual KGI approach. The evaluation spans both point-wise imputation accuracy and performance on a downstream clinical task (mortality prediction), highlighting the relative advantages of data-driven vs. knowledge-driven methodologies in modern healthcare AI.
+\end{abstract}
+
+\input{sections/01_data_and_problem}
+\input{sections/02_architectures}
+\input{sections/03_imputation_results}
+\input{sections/04_downstream_results}
+\input{sections/05_discussion}
+
+\end{document}

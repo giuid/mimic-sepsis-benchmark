@@ -1,0 +1,15 @@
+# Block masking configuration (SSSD-style)
+name: block
+type: block
+
+# Block length (number of consecutive time steps)
+block_len: 10
+
+# Number of blocks per sample
+n_blocks: 2
+
+# Whether to mask all features in the block (true) or random subset
+mask_all_features: true
+
+# Seed for deterministic eval masks
+eval_seed: 42

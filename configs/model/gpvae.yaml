@@ -1,0 +1,8 @@
+name: gpvae
+latent_size: 64
+encoder_sizes: [128, 128]
+decoder_sizes: [128, 128]
+
+optimizer:
+  lr: 1e-3
+  weight_decay: 1e-5

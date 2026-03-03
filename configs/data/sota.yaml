@@ -1,0 +1,65 @@
+# MIMIC-IV data configuration
+mimic_root: "${oc.env:HOME}/Data/indus_data/physionet.org/files/mimiciv/3.1"
+processed_dir: "data/sota"
+
+# ICU features (17 variables SOTA)
+vitals:
+  heart_rate: 220045
+  sbp_noninvasive: 220179
+  dbp_noninvasive: 220180
+  sbp_invasive: 220050   # fallback for non-invasive
+  dbp_invasive: 220051   # fallback for non-invasive
+  mbp_noninvasive: 220181
+  mbp_invasive: 220052   # fallback
+  respiratory_rate: 220210
+  spo2: 220277
+  temperature: 223762
+  gcs_total: 226755      # GCS Total
+
+labs:
+  glucose: 50931
+  creatinine: 50912
+  bilirubin_total: 50885
+  bun: 51006
+  wbc: 51301
+  sodium: 50983
+  potassium: 50971
+  hematocrit: 51221
+  bicarbonate: 50882
+
+# Feature names (ordered, D=17)
+feature_names:
+  - heart_rate
+  - sbp
+  - dbp
+  - mbp
+  - respiratory_rate
+  - spo2
+  - temperature
+  - gcs
+  - glucose
+  - creatinine
+  - bilirubin
+  - bun
+  - wbc
+  - sodium
+  - potassium
+  - hematocrit
+  - bicarbonate
+
+# Temporal window
+icu_window_hours: 48
+time_step_hours: 1
+min_stay_hours: 24  # SOTA: at least 24h
+min_coverage: 0.0   # handled by "at least one" rule in preprocess
+
+# Split ratios (by patient)
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  seed: 42
+
+# DataLoader
+batch_size: 512
+num_workers: 2

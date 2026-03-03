@@ -1,0 +1,36 @@
+\section{KGI architecture on SAITS}
+The SAITS (Self-Attention-based Imputation for Time Series) architecture has been extended to incorporate Knowledge-Guided Imputation (KGI). This integration aims to infuse the model with medical domain knowledge extracted from the Unified Medical Language System (UMLS), allowing the imputation process to be guided by established clinical relationships (e.g., causality, diagnostic associations) rather than relying solely on statistical interpolation.
+
+\subsection{Architecture Overview and Forward Pass}
+The integration of the KGI module occurs early in the SAITS forward pass. It acts as a semantic enhancement to the latent numerical representations before the primary temporal self-attention blocks (DMSA) process them. The modified forward pass consists of the following consecutive phases:
+
+\subsubsection{Phase 1: Ingestion and Positional Encoding (Vanilla Transformer base)}
+The raw temporal input data $\mathbf{X} \in \mathbb{R}^{B \times T \times D}$ is first multiplied by the input mask $\mathbf{M}$ to zero out missing values. The masked input and the mask itself are concatenated across the feature dimension and linearly projected into a hidden dimension $d_{model}$ (e.g., 64 or 128) using the \texttt{input\_proj} layer. Finally, positional encoding is added to inject temporal coordinates, resulting in the base latent tensor $\mathbf{H}_{base} \in \mathbb{R}^{B \times T \times d_{model}}$.
+
+\subsubsection{Phase 2: KGI Semantic Injection (The Multimodal Fusion)}
+If the KGI module is enabled, the model intercepts $\mathbf{H}_{base}$ and performs multimodal fusion to inject linguistic medical knowledge:
+
+\begin{enumerate}
+    \item \textbf{Textual Context Extraction}: At each time step $t$, the \texttt{TextualKnowledgeInjector} inspects the \texttt{surviving\_mask} to identify which clinical variables are genuinely observed for the given patient. It then retrieves pre-computed MedBERT embeddings (768-dimensional) representing true clinical relational triplets (e.g., \textit{``Infection causes High Lactate''}) among these observed variables. These embeddings are average-pooled and linearly adapted to the $d_{model}$ space, yielding the contextual semantic tensor $\mathbf{C}_{text}$.
+    
+    \item \textbf{Cross-Attention Fusion}: A Multi-Head Cross-Attention layer is employed to fuse the two distinct modalities. The numerical latent tensor $\mathbf{H}_{base}$ acts as the Query ($\mathbf{Q}$), asking \textit{``What should the missing coordinates be?''}. Simultaneously, the medical semantic tensor $\mathbf{C}_{text}$ serves as both the Key ($\mathbf{K}$) and Value ($\mathbf{V}$), dictating the physiological rules. This allows the model to dynamically attend to relevant medical knowledge based entirely on the patient's current observable state.
+    
+    \item \textbf{Residual Connection}: To preserve the original time-series signals and prevent semantic override, the output of the cross-attention is added back to $\mathbf{H}_{base}$ via a residual connection and normalized, producing the knowledge-enhanced tensor $\mathbf{H}_{kgi}$.
+\end{enumerate}
+
+\subsubsection{Phase 3: DMSA Blocks and Imputation}
+The semantically enriched tensor $\mathbf{H}_{kgi}$ is then passed to the standard SAITS dual-block architecture:
+
+\begin{enumerate}
+    \item \textbf{DMSA Block 1}: This block performs both temporal and feature-wise self-attention on $\mathbf{H}_{kgi}$, generating the first imputation draft $\mathbf{\hat{X}}_1$. Because the latent input was guided by clinical knowledge at its root, this initial draft can better anticipate acute physiological changes dictated by medicine, avoiding the trap of naive linear interpolation over long missing gaps.
+    
+    \item \textbf{Pass-through and DMSA Block 2}: The original missing gaps in $\mathbf{X}$ are filled with the corresponding guessed values from $\mathbf{\hat{X}}_1$. This hybrid tensor is projected again, positional encodings are reapplied, and it is passed through the second DMSA block to refine the predictions, yielding $\mathbf{\hat{X}}_2$.
+\end{enumerate}
+
+\subsubsection{Phase 4: Output Combination and Backpropagation}
+Finally, the model computes a weighted average of $\mathbf{\hat{X}}_1$ and $\mathbf{\hat{X}}_2$ using a learnable diagonal weight matrix to produce the final imputation output $\mathbf{\hat{X}}_3$. 
+
+During training, the loss function penalizes errors strictly on artificially masked target values (Masked Imputation Task). This gradient forces the Cross-Attention weights in the KGI layer to actively learn which specific medical textual priors are most beneficial for minimizing the imputation error of critical clinical variables.
+
+\subsection{Conclusion}
+By decoupling the knowledge representation from static Graph Neural Networks (GNNs) and moving towards dynamic textual embeddings fused via Cross-Attention, the KGI-SAITS framework can leverage the full expressivity of natural language medical relationships, adapting to each patient's specific temporal context.

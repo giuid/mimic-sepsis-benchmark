@@ -1,0 +1,42 @@
+# SSSD hyperparameters — Stabilized for MIMIC-IV (T=48)
+# Original: Alcaraz & Strodthoff, TMLR 2023
+# Changes: reduced depth (36→6), reduced channels (256→128), added inference_samples
+name: sssd
+
+# Architecture
+residual_layers: 6
+residual_channels: 128
+skip_channels: 128
+diffusion_embedding_dim: 128
+
+# S4 config
+s4:
+  state_dim: 128     # N in S4
+  dropout: 0.2
+  bidirectional: false
+  layer_norm: false
+
+# Diffusion
+diffusion:
+  T: 1000              # diffusion steps
+  beta_start: 1.0e-4
+  beta_end: 0.02
+  schedule: linear      # linear noise schedule
+  inference_steps: 50   # DDIM steps for fast inference (optional)
+
+# Inference
+inference_samples: 10   # average over 10 samples to reduce noise
+
+# Optimizer
+optimizer:
+  name: adam
+  lr: 2.0e-4
+  weight_decay: 0.0
+
+# Scheduler
+scheduler:
+  name: reduce_on_plateau
+  factor: 0.5
+  patience: 10
+  min_lr: 1.0e-6
+

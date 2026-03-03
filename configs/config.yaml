@@ -1,0 +1,30 @@
+# @package _global_
+
+defaults:
+  - data: mimic4
+  - model: saits
+  - masking: random
+  - _self_
+
+# Training
+seed: 42
+trainer:
+  max_epochs: 100
+  accelerator: auto
+  devices: 1
+  precision: "16-mixed"
+  gradient_clip_val: 1.0
+  log_every_n_steps: 10
+  check_val_every_n_epoch: 1
+  fast_dev_run: false
+  max_steps: -1  # -1 = unlimited
+
+# Logging
+logging:
+  project: "mimic-iv-imputation"
+  logger: "wandb"  # or "tensorboard"
+  log_dir: "outputs/logs"
+
+# Output
+output_dir: "outputs/${hydra:runtime.choices.data}/${model.name}/${masking.name}/${now:%Y-%m-%d_%H-%M-%S}"
+checkpoint_dir: "${output_dir}/checkpoints"

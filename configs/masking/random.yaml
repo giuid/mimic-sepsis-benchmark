@@ -1,0 +1,12 @@
+# Random masking configuration
+name: random
+type: random
+
+# Probability of masking each observed entry
+p: 0.3
+
+# Predefined levels for evaluation sweep
+levels: [0.1, 0.3, 0.5]
+
+# Seed for deterministic eval masks
+eval_seed: 42

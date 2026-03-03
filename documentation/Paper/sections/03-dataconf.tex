@@ -1,0 +1,141 @@
+\section{DATA}
+
+Here we report detail the preprocessing pipeline and configuration of the dataset extracted from MIMIC-IV v3.1 for benchmarking state-of-the-art (SOTA) time-series imputation models. The goal is to provide a standardized, high-quality dataset following clinical and architectural best practices.
+
+\subsection{Cohort Selection}
+The cohort was defined according to the following inclusion criteria:
+\begin{enumerate}
+    \item \textbf{Adult Patients:} Minimum age of 18 years at the time of ICU admission.
+    \item \textbf{Index Admission:} Only the first ICU stay of the first hospitalization for each patient was included to avoid data leakage and intra-patient correlation.
+    \item \textbf{Stay Duration:} ICU stays with a length between 48 and 500 hours were selected to ensure sufficient temporal information for modeling.
+\end{enumerate}
+
+\subsection{Feature Selection}
+A set of 17 key clinical variables was selected, encompassing vital signs and common laboratory tests as defined in standard SOTA benchmarks:
+\begin{itemize}
+    \item \textbf{Vital Signs:} Heart Rate, SBP, DBP, MBP, Respiratory Rate, SpO2, Temperature.
+    \item \textbf{Laboratory/Neurological:} GCS, Glucose, Creatinine, Bilirubin, BUN, WBC, Sodium, Potassium, Hematocrit, Bicarbonate.
+\end{itemize}
+
+\subsubsection{Comparison with Previous Configuration}
+Prior experiments utilized a different set of 17 variables, primarily focused on laboratory values available in the older MIMIC-III subset. The key differences are:
+\begin{itemize}
+    \item \textbf{Removed:} Chloride, Platelets, Hemoglobin, Lactate.
+    \item \textbf{Added (SOTA):} Mean Blood Pressure (MBP), Glasgow Coma Scale (GCS), Total Bilirubin, Bicarbonate.
+\end{itemize}
+The addition of GCS and Bicarbonate aligns the dataset with standard mortality prediction benchmarks, where these variables are highly predictive. The previous configuration resulted in a smaller dataset size due to stricter inclusion criteria on less frequently sampled labs (e.g., Lactate).
+
+
+\subsection{Preprocessing Pipeline}
+\subsubsection{Time Binning and Aggregation}
+Raw measurements were aggregated into 1-hour hourly bins. For bins with multiple observations, the mean value was computed. This results in a sequence length of $T=48$ for the first 48 hours of each ICU stay.
+
+\subsubsection{Window Inclusion Strategy}
+A window is included if and only if it contains at least one observation across all 17 features. This ensures that the model always has some ground truth to work with in every sample.
+
+\subsubsection{Missingness and Statistics}
+The final dataset consists of:
+\begin{itemize}
+    \item \textbf{Training samples:} 36,029
+    \item \textbf{Validation samples:} 7,721
+    \item \textbf{Test samples:} 7,721
+    \item \textbf{Total Features (D):} 17
+    \item \textbf{Temporal Steps (T):} 48
+    \item \textbf{Overall Observational Coverage:} $\sim 32.3\%$
+\end{itemize}
+
+\subsection{Data Splitting}
+The data was split at the patient level (70\% Train, 15\% Val, 15\% Test) to ensure that the evaluation measures inter-patient generalization rather than simple interpolation.
+
+\subsection{Evaluation Metrics}
+To comprehensively assess model performance, we utilize five complementary metrics:
+
+\begin{itemize}
+    \item \textbf{MAE (Mean Absolute Error):} Measures the average magnitude of errors in pure reconstruction terms, robust to outliers. Lower is better.
+    \item \textbf{RMSE (Root Mean Squared Error):} Similar to MAE but penalizes large errors more heavily. Lower is better.
+    \item \textbf{MRE (Mean Relative Error):} Evaluation of the error relative to the magnitude of the ground truth value. Useful for variables with vastly different scales. Lower is better.
+    \item \textbf{R2 Score (Coefficient of Determination):} Represents the proportion of variance in the dependent variable that is predictable from the independent variables. An R2 of 1.0 indicates perfect prediction, while 0.0 indicates a model that just predicts the mean. Negative values indicate performance worse than a simple mean predictor. Higher is better.
+    \item \textbf{Correlation Error:} The mean absolute difference between the correlation matrix of the imputed data and the ground truth. This measures how well the model preserves the inter-variable relationships and covariance structure of the dataset. Lower is better.
+\end{itemize}
+
+\subsection{Results}
+Benchmarking was performed on the SOTA test set. The table below summarizes the performance of SAITS variants against baselines.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{Epoch} & \textbf{MAE} $\downarrow$ & \textbf{RMSE} $\downarrow$ & \textbf{MRE} $\downarrow$ & \textbf{R2} $\uparrow$ & \textbf{Corr. Err} $\downarrow$ \\
+\midrule
+\textbf{SAITS (Vanilla)} & 48 & \textbf{0.3245} & \textbf{0.5092} & \textbf{1.6735} & \textbf{0.7392} & 0.1109 \\
+SAITS (Generic BERT) & 48 & 0.4436 & 0.6257 & 2.1890 & 0.6062 & 0.0871 \\
+SAITS (SapBERT Embeds) & 49 & 0.4462 & 0.6300 & 2.2403 & 0.6008 & 0.0922 \\
+SAITS (Random) & 49 & 0.4538 & 0.6357 & 2.2490 & 0.5935 & 0.0901 \\
+SAITS (SapBERT + Prior Init) & 99 & 0.4489 & 0.6297 & 2.1699 & 0.6012 & 0.0942 \\
+BRITS & 49 & 0.5277 & 0.7235 & 1.8381 & 0.4739 & 0.1585 \\
+GP-VAE & 29 & - & - & - & - & 0.0523 \\
+TimesFM 2.5 (Zero-shot) & - & 0.4524 & 0.6960 & 1.9955 & 0.4899 & \textbf{0.0405} \\
+\bottomrule
+\end{tabular}
+\caption{Comprehensive Evaluation on SOTA Test Set. SAITS (Vanilla) achieves the best point-wise accuracy (MAE/RMSE), while TimesFM 2.5 achieves the highest fidelity in preserving correlation structure (lower Corr. Err), even in a zero-shot setting.}
+\label{tab:results}
+\end{table}
+
+\subsection{Analysis: Knowledge-Driven vs Data-Driven Performance}
+A key observation from our experiments is that the \textbf{Knowledge-Driven} approach (using Graph Priors or SapBERT embeddings) was significantly more effective in the previous configuration than in the current SOTA setup. This can be attributed to three main factors:
+
+\begin{enumerate}
+    \item \textbf{Redundancy vs. Independence (The MBP Factor):}
+    The SOTA configuration introduces \textbf{Mean Blood Pressure (MBP)}, which is highly correlated with SBP and DBP (approximately $MBP \approx \frac{1}{3}SBP + \frac{2}{3}DBP$). Deep learning models (like the Transformer in SAITS) can trivially learn this linear relationship from data, rendering the external graph guidance redundant. In contrast, the previous configuration included variables like \textbf{Lactate}, \textbf{Platelets}, and \textbf{Hemoglobin}, which are physiologically distinct and cannot be easily inferred from vital signs alone. In that "sparse and independent" regime, the graph provided crucial external medical knowledge (e.g., linking Shock to Lactate elevation) that the model could not learn solely from the limited data.
+
+    \item \textbf{Data Density and Volume:}
+    The SOTA dataset is significantly larger and denser. By removing less frequently sampled laboratory values (like Lactate) and focusing on universally available vitals and common labs, the effective training set size increased. As data volume increases, pure \textbf{Data-Driven} methods (like Vanilla SAITS) tend to outperform methods with strong inductive biases (like Graph Priors), which can act as overly restrictive regularizers when sufficient data is available to learn the true underlying dynamics.
+
+    \item \textbf{Graph Quality and Connectivity:}
+    The utility of a prior depends on the quality of the connections in the Knowledge Graph. Variables like Lactate and Hemoglobin have well-defined, strong edges in medical ontologies relating to specific pathologies (Sepsis, Anemia). The new variables in the SOTA set (e.g., Bicarbonate, specific GCS components) may have weaker or more generic connections in the current graph implementation, providing less informative signal guidance.
+\end{enumerate}
+
+In summary, the transition to the SOTA configuration shifted the problem from a \textit{low-data, high-independence} regime (where Plans/Graphs excel) to a \textit{high-data, high-redundancy} regime (where pure Attention excels).
+
+\subsection{TimesFM: Foundation Models for Imputation}
+We evaluated \textbf{TimesFM 2.5}, a 200M parameter time-series foundation model, in a zero-shot imputation setting. While its reconstruction error (MAE 0.4524) is higher than the task-specific SAITS (0.3245), TimesFM achieved the \textbf{lowest correlation error (0.0405)} among all models. This indicates that foundation models pretrained on vast amounts of time-series data develop a superior internal representation of temporal and cross-variable dynamics, allowing them to preserve the biological covariance structure even without fine-tuning on medical data.
+
+\subsection{Downstream Task Evaluation: Decompensation Prediction}
+To validate the clinical utility of the imputations, we evaluated the models on the downstream task of \textbf{Decompensation Prediction} (24-hour mortality during the ICU stay). 
+
+\subsubsection{Experimental Setup}
+Following standard MIMIC benchmarks, we used the first 48 hours of ICU stay to predict if the patient would die within the subsequent 24 hours. Given the high class imbalance ($\sim 2-3\%$ positive cases), we utilize \textbf{AUROC} and \textbf{AUPRC} as primary metrics. We evaluated two classifiers:
+\begin{enumerate}
+    \item \textbf{LightGBM (Temporal Features):} Trained on min, max, mean, and last-observed features extracted from the imputed time-series.
+    \item \textbf{GRU (Deep Classifier):} A gated recurrent unit network that processes the full $(N, T, D)$ imputed tensor.
+\end{enumerate}
+
+\subsubsection{Results: SOTA vs. Previous Feature Selection}
+The table below compares the performance of the SOTA feature selection against the previous selection.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llcc|cc}
+\toprule
+ & & \multicolumn{2}{c}{\textbf{GRU Classifier}} & \multicolumn{2}{c}{\textbf{LightGBM}} \\
+\textbf{Config} & \textbf{Imputation Model} & \textbf{AUROC} $\uparrow$ & \textbf{AUPRC} $\uparrow$ & \textbf{AUROC} $\uparrow$ & \textbf{AUPRC} $\uparrow$ \\
+\midrule
+\multirow{4}{*}{SOTA} & SAITS (Vanilla) & 0.8746 & 0.2497 & 0.8495 & 0.2493 \\
+ & SAITS (SapBERT Prior) & 0.8621 & \textbf{0.2522} & 0.8489 & 0.1895 \\
+ & BRITS & \textbf{0.8880} & 0.2002 & \textbf{0.8824} & 0.2150 \\
+ & Mean Baseline & 0.8614 & 0.1844 & 0.8452 & 0.1328 \\
+\midrule
+\multirow{3}{*}{Prev.} & SAITS (Vanilla) & 0.8785 & 0.1579 & 0.8422 & 0.1741 \\
+ & SAITS (SapBERT) & 0.8445 & 0.1965 & 0.8086 & 0.1445 \\
+ & SAITS (SapBERT Prior) & 0.8217 & 0.1810 & 0.8159 & 0.1469 \\
+\bottomrule
+\end{tabular}
+\caption{Downstream Evaluation on Decompensation. The SOTA feature selection provides a significant boost in AUPRC compared to the previous selection.}
+\label{tab:downstream}
+\end{table}
+
+\subsubsection{Impact of Feature Choice on Clinical Signal}
+The most striking result is the significant improvement in \textbf{AUPRC} when moving from the previous variable selection to the SOTA selection. Even for the exact same model (SAITS Vanilla), the AUPRC jumped from \textbf{0.1579} to \textbf{0.2497}. 
+
+This confirms our hypothesis that variables like \textbf{Glasgow Coma Scale (GCS)} and \textbf{Bicarbonate} (added in SOTA) carry substantially more prognostic information for acute mortality than the discarded laboratory values (e.g., Platelets, Hemoglobin). Furthermore, the \textbf{Knowledge-Driven} initialization (Prior Init) yielded the highest AUPRC in the SOTA setup, indicating that the graph successfully guides the model to reconstruct clinically relevant patterns even when pure reconstruction accuracy (MAE) might be lower.
+

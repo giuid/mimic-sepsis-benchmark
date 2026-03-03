@@ -1,0 +1,17 @@
+# Feature-wise / sensor failure masking configuration
+name: featurewise
+type: featurewise
+
+# Which feature(s) to simulate sensor failure on
+# Index into feature_names list (0=heart_rate, 4=spo2, etc.)
+# -1 means randomly select one feature per sample
+feature_idx: -1
+
+# Fraction of the time range to mask for the failed sensor
+p_time: 0.5
+
+# Minimum contiguous block length for the failure
+min_block_len: 5
+
+# Seed for deterministic eval masks
+eval_seed: 42
