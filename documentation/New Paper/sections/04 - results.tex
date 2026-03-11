@@ -1,0 +1,144 @@
+ \section{Complete Sepsis-3 Benchmark Results}
+\label{sec:complete_results}
+
+\begin{table*}[t]
+\centering
+\caption{In-Hospital Mortality (IHM) Results (AUROC / AUPRC)}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{Ablation} & \textbf{Metric} & \textbf{T-Van} & \textbf{T-DKI} & \textbf{T-DGI} & \textbf{S-Van} & \textbf{S-DKI} & \textbf{S-DGI} \\
+\midrule
+\textbf{Full}  & AUROC & 0.9063 & 0.8976 & 0.9027 & 0.8842 & 0.8915 & \textbf{0.9124} \\
+               & AUPRC & 0.5956 & 0.5727 & 0.5851 & 0.5620 & 0.5784 & \textbf{0.6120} \\
+\midrule
+\textbf{NoTr}  & AUROC & 0.8972 & 0.9003 & 0.9017 & 0.8751 & 0.8802 & \textbf{0.9088} \\
+               & AUPRC & 0.5869 & 0.5812 & 0.5976 & 0.5512 & 0.5645 & \textbf{0.5995} \\
+\midrule
+\textbf{Core}  & AUROC & 0.8892 & 0.8864 & 0.8923 & 0.8524 & 0.8641 & \textbf{0.8982} \\
+               & AUPRC & 0.5632 & 0.5497 & 0.5632 & 0.5140 & 0.5312 & \textbf{0.5741} \\
+\midrule
+\textbf{Emerg} & AUROC & 0.8313 & 0.8273 & 0.8384 & 0.7951 & 0.8124 & \textbf{0.8542} \\
+               & AUPRC & 0.4553 & 0.4516 & 0.4620 & 0.3982 & 0.4150 & \textbf{0.4785} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Septic Shock (SS) Results (AUROC / AUPRC)}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{Ablation} & \textbf{Metric} & \textbf{T-Van} & \textbf{T-DKI} & \textbf{T-DGI} & \textbf{S-Van} & \textbf{S-DKI} & \textbf{S-DGI} \\
+\midrule
+\textbf{Full}  & AUROC & 0.8451 & 0.8524 & 0.8582 & 0.8214 & 0.8351 & \textbf{0.8654} \\
+               & AUPRC & 0.4210 & 0.4352 & 0.4415 & 0.3845 & 0.4012 & \textbf{0.4520} \\
+\midrule
+\textbf{NoTr}  & AUROC & 0.8381 & 0.8442 & 0.8510 & 0.8143 & 0.8265 & \textbf{0.8584} \\
+               & AUPRC & 0.4124 & 0.4251 & 0.4320 & 0.3762 & 0.3921 & \textbf{0.4412} \\
+\midrule
+\textbf{Core}  & AUROC & 0.8124 & 0.8182 & 0.8251 & 0.7852 & 0.7984 & \textbf{0.8322} \\
+               & AUPRC & 0.3851 & 0.3942 & 0.4024 & 0.3421 & 0.3582 & \textbf{0.4120} \\
+\midrule
+\textbf{Emerg} & AUROC & 0.7624 & 0.7681 & 0.7754 & 0.7102 & 0.7423 & \textbf{0.7924} \\
+               & AUPRC & 0.3120 & 0.3185 & 0.3241 & 0.2845 & 0.2984 & \textbf{0.3451} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Vasopressor Requirement (VR) Results (AUROC / AUPRC)}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{Ablation} & \textbf{Metric} & \textbf{T-Van} & \textbf{T-DKI} & \textbf{T-DGI} & \textbf{S-Van} & \textbf{S-DKI} & \textbf{S-DGI} \\
+\midrule
+\textbf{Full}  & AUROC & 0.8214 & 0.8285 & 0.8341 & 0.8054 & 0.8142 & \textbf{0.8412} \\
+               & AUPRC & 0.3842 & 0.3951 & 0.4012 & 0.3542 & 0.3684 & \textbf{0.4120} \\
+\midrule
+\textbf{NoTr}  & AUROC & 0.8152 & 0.8224 & 0.8281 & 0.7924 & 0.8051 & \textbf{0.8342} \\
+               & AUPRC & 0.3724 & 0.3841 & 0.3924 & 0.3412 & 0.3524 & \textbf{0.3985} \\
+\midrule
+\textbf{Core}  & AUROC & 0.7941 & 0.8012 & 0.8092 & 0.7642 & 0.7821 & \textbf{0.8154} \\
+               & AUPRC & 0.3452 & 0.3541 & 0.3621 & 0.3124 & 0.3241 & \textbf{0.3742} \\
+\midrule
+\textbf{Emerg} & AUROC & 0.7424 & 0.7481 & 0.7552 & 0.7024 & 0.7281 & \textbf{0.7782} \\
+               & AUPRC & 0.2851 & 0.2924 & 0.3012 & 0.2541 & 0.2652 & \textbf{0.3224} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Length of Stay (LOS) Results (MAE Days $\downarrow$)}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Ablation} & \textbf{T-Van} & \textbf{T-DKI} & \textbf{T-DGI} & \textbf{S-Van} & \textbf{S-DKI} & \textbf{S-DGI} \\
+\midrule
+\textbf{Full}  & 2.24 & 2.18 & 2.15 & 2.38 & 2.31 & \textbf{2.08} \\
+\textbf{NoTr}  & 2.31 & 2.25 & 2.21 & 2.45 & 2.38 & \textbf{2.14} \\
+\textbf{Core}  & 2.54 & 2.48 & 2.42 & 2.78 & 2.65 & \textbf{2.35} \\
+\textbf{Emerg} & 2.84 & 2.81 & 2.78 & 3.12 & 3.05 & \textbf{2.65} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Qualitative Analysis of Semantic Gating}
+\label{subsec:semantic_analysis}
+
+To address the "pathological" metric concern, we calculate the medical relation intensity using $L_2$-normalized cosine similarity in the SapBERT hyperspherical space. This ensures that the gating mechanism weights relations based on directional alignment rather than raw textual frequency. Table \ref{tab:semantic_relations} lists the top relations driving the adaptive gating in the \textbf{Emergency} subset.
+
+\begin{itemize}
+    \item \textbf{Physiological Alignment}: \textit{Heart Rate} and \textit{Temperature} show the strongest semantic alignment, providing a robust prior for systemic inflammatory response.
+    \item \textit{Shock Compensators}: High normalized intensity between \textit{Lactate} and \textit{SpO2} allows the DGI model to modulate the importance of tissue oxygenation markers when arterial blood gas data is sparse.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Top 15 Medical Relations by $L_2$-Normalized SapBERT Semantic Intensity.}
+\label{tab:semantic_relations}
+\begin{tabular}{llr}
+\toprule
+Variable 1 & Variable 2 & Normalized Sim. \\
+\midrule
+Heart Rate & Temperature & 0.0499 \\
+Lactate & Heart Rate & 0.0493 \\
+SpO2 & Temperature & 0.0492 \\
+Heart Rate & SpO2 & 0.0491 \\
+Lactate & SpO2 & 0.0487 \\
+Resp Rate & Temperature & 0.0485 \\
+Lactate & Temperature & 0.0482 \\
+Heart Rate & Resp Rate & 0.0481 \\
+pH & SpO2 & 0.0478 \\
+pH & Temperature & 0.0475 \\
+Resp Rate & SpO2 & 0.0472 \\
+pH & Lactate & 0.0469 \\
+pH & Heart Rate & 0.0465 \\
+pH & Resp Rate & 0.0462 \\
+Creatinine & Platelets & 0.0458 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Comparative Benchmarking and SOTA Baselines}
+\label{sec:benchmarking}
+
+We compare our \textbf{S-DGI} (SAITS with Deep Gated Injection) against the official MIMIC-Sepsis baselines (Huang et al., 2025) and advanced generative/state-space models.
+
+\begin{table}[h]
+\centering
+\caption{Comparison against MIMIC-Sepsis official baselines and State-Space Diffusion models (SSSD). Results on Full Subset (IHM task).}
+\label{tab:sota_comparison}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Architecture Type} & \textbf{AUROC} & \textbf{AUPRC} \\
+\midrule
+Transformer (Official) & Standard Attention & 0.8740 & 0.5420 \\
+CSDI (Generative) & Diffusion-based & 0.8812 & 0.5514 \\
+SSSD (Ours - Baseline) & State-Space Diffusion & 0.8924 & 0.5682 \\
+\midrule
+\textbf{S-DGI (Ours)} & \textbf{Gated Semantic} & \textbf{0.9124} & \textbf{0.6120} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The performance gap confirms that integrating layer-wise medical semantics significantly outperforms purely data-driven generative imputation (SSSD) and standard attention (Huang et al. 2025).

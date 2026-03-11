@@ -78,28 +78,67 @@ def generate_medbert_relations(vocab_df: pd.DataFrame, specific_rels: dict, grap
     audit_data = []
     
     MIMIC_TARGETS_INVERTED = {
-        "Heart Rate": "C0018810",
-        "Systolic Blood Pressure": "C0871470",
-        "Diastolic Blood Pressure": "C0428883",
-        "Respiratory Rate": "C0231832",
-        "Oxygen Saturation": "C0483415",
-        "Temperature": "C0039476",
-        "Glucose": "C0017725",
-        "Potassium": "C0032821",
-        "Sodium": "C0037473",
-        "Chloride": "C0008203",
-        "Creatinine": "C0010294",
-        "BUN": "C0005845",
-        "White Blood Cells": "C0023516",
-        "Platelets": "C0005821",
-        "Hemoglobin": "C0019046",
-        "Hematocrit": "C0018935",
-        "Lactate": "C0376261",
-        "Glasgow Coma Scale": "C0017084",
-        "Urine Output": "C0042034",
-        "Norepinephrine": "C0028351",
-        "IV Fluids": "C0021099",
-        "Mechanical Ventilation": "C0035222"
+        # Vitals
+        "Heart Rate": "C0018810", "heart_rate": "C0018810",
+        "Systolic Blood Pressure": "C0871470", "sbp": "C0871470",
+        "Diastolic Blood Pressure": "C0428883", "dbp": "C0428883",
+        "Mean Arterial Pressure": "C0003842", "mbp": "C0003842",
+        "Respiratory Rate": "C0231832", "respiratory_rate": "C0231832",
+        "Oxygen Saturation": "C0483415", "spo2": "C0483415",
+        "Temperature": "C0039476", "temperature": "C0039476",
+        
+        # Hemodynamics
+        "Central Venous Pressure": "C0007817", "cvp": "C0007817",
+        "Pulmonary Artery Pressure": "C0034068", "pap_mean": "C0034068",
+        "pap_systolic": "C0034068", "pap_diastolic": "C0034068",
+        "Cardiac Index": "C0007134", "cardiac_index": "C0007134",
+
+        # Labs
+        "Glucose": "C0017725", "glucose": "C0017725",
+        "Lactate": "C0376261", "lactate": "C0376261",
+        "Creatinine": "C0010294", "creatinine": "C0010294",
+        "Bilirubin, Total": "C0005437", "bilirubin": "C0005437",
+        "Platelet Count": "C0032181", "platelets": "C0032181",
+        "White Blood Cells": "C0023516", "wbc": "C0023516",
+        "Inspired O2 Fraction": "C0021099", "fio2": "C0021099",
+        "pH": "C0031290", "ph": "C0031290",
+        "pO2": "C0030101", "pao2": "C0030101",
+        "pCO2": "C0007110", "paco2": "C0007110",
+        "Potassium": "C0032821", "potassium": "C0032821",
+        "Sodium": "C0037473", "sodium": "C0037473",
+        "Chloride": "C0008203", "chloride": "C0008203",
+        "Magnesium": "C0024467", "magnesium": "C0024467",
+        "Calcium": "C0006675", "calcium": "C0006675",
+        "CO2": "C0007110", "total_co2": "C0007110",
+        "AST": "C0004131", "ast": "C0004131",
+        "ALT": "C0001443", "alt": "C0001443",
+        "Total Protein": "C0005437", "total_protein": "C0005437",
+        "Albumin": "C0001924", "albumin": "C0001924",
+        "Troponin": "C0041199", "troponin": "C0041199",
+        "CRP": "C0005971", "crp": "C0005971",
+        "Hemoglobin": "C0019046", "hemoglobin": "C0019046",
+        "Hematocrit": "C0018935", "hematocrit": "C0018935",
+        "Prothrombin Time": "C0033706", "pt": "C0033706",
+        "PTT": "C0030551", "ptt": "C0030551",
+        "INR": "C0021396", "inr": "C0021396",
+        "HCO3": "C0005063", "hco3": "C0005063",
+        "BUN": "C0005845", "urea_nitrogen": "C0005845",
+
+        # Neuro
+        "Glasgow Coma Scale": "C0017084", "gcs": "C0017084",
+        "Richmond-RAS Scale": "C0035357", "richmond_ras": "C0035357",
+
+        # Resp Meta
+        "PEEP": "C0032911", "peep": "C0032911",
+        "Tidal Volume": "C0040213", "tidal_volume": "C0040213",
+        "Minute Volume": "C0026204", "minute_volume": "C0026204",
+        "FiO2": "C0021099",
+        
+        # Grounded Treatments (Phase 1)
+        "urine_output": "C0042034",
+        "norepi_equiv": "C0028351",
+        "fluid_volume": "C0021099",
+        "vent_status": "C0035222"
     }
 
     sapbert_model_name = "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
@@ -255,19 +294,37 @@ if __name__ == '__main__':
         
     df_vocab = pd.read_csv(VOCAB_CSV)
     
-    # Target 22 Sepsis Benchmark features (Filtering by ItemID to be precise)
+    # Target 55 Sepsis Benchmark features
     target_itemids = [
-        220045, 220210, 220277, 223762, 220179, 220180, 220052, 50931, 50813, 50912, 
-        50885, 51265, 51301, 223835, 50820, 50821, 50818, 220739, 226559, 221906, 
-        225158, 223848
+        220045, 220179, 225310, 220181, 220210, 220277, 223762, # Vitals
+        220074, 220059, 220060, 220061, 228368,                 # Hemodynamics
+        225664, 50813, 220615, 225690, 227457, 220546, 223835, 223830, # Labs 1
+        220224, 220235, 227442, 220645, 220602, 220635, 225625, 50804, # Labs 2
+        220587, 220644, 220650, 227456, 227429, 227444, 220228, 220545, # Labs 3
+        51279, 227465, 227466, 227467, 227443, 51006,                  # Labs 4
+        226755, 228096,                                                # Neuro
+        223834, 220339, 224686, 224687, 224697, 224695, 224696         # Resp
     ]
     
     df_targets = df_vocab[df_vocab['itemid'].isin(target_itemids)].copy()
-    print(f"Filtered to {len(df_targets)} target features by ItemID.")
+    
+    # --- PHASE 1: GROUNDING TREATMENTS (New) ---
+    # We use these labels so that MIMIC_TARGETS_INVERTED finds the correct CUIs
+    virtual_treatments = pd.DataFrame([
+        {"itemid": 9991, "label": "urine_output"},
+        {"itemid": 9992, "label": "norepi_equiv"},
+        {"itemid": 9993, "label": "fluid_volume"},
+        {"itemid": 9994, "label": "vent_status"}
+    ])
+    # Add to targets for embedding generation
+    df_targets = pd.concat([df_targets, virtual_treatments], ignore_index=True)
+    # -------------------------------------------
+
+    print(f"Filtered to {len(df_targets)} target features (including {len(virtual_treatments)} grounded treatments).")
     
     relation_embeddings = generate_medbert_relations(df_targets, specific_rels, graph_data)
     
-    out_file = os.path.join(OUT_DIR, 'medbert_relation_embeddings_sepsis.pkl')
+    out_file = os.path.join(OUT_DIR, 'medbert_relation_embeddings_sepsis_full.pkl')
     with open(out_file, 'wb') as f:
         pickle.dump(relation_embeddings, f)
     print(f"Saved {len(relation_embeddings)} relation embeddings to {out_file}")

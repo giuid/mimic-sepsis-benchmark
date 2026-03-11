@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def build_model(cfg: DictConfig, d_feature: int, seq_len: int) -> pl.LightningModule:
+def build_model(cfg: DictConfig, d_feature: int, seq_len: int, feature_indices: list[int] | None = None) -> pl.LightningModule:
     """
     Build model from config.
 
@@ -43,6 +43,7 @@ def build_model(cfg: DictConfig, d_feature: int, seq_len: int) -> pl.LightningMo
         cfg: full Hydra config
         d_feature: number of features D
         seq_len: sequence length T
+        feature_indices: indices of selected features (for subset ablation)
 
     Returns:
         LightningModule instance
@@ -129,6 +130,22 @@ def build_model(cfg: DictConfig, d_feature: int, seq_len: int) -> pl.LightningMo
             decoder_sizes=cfg.model.get("decoder_sizes", [128, 128]),
             lr=cfg.model.optimizer.lr,
             weight_decay=cfg.model.optimizer.weight_decay,
+        )
+
+    elif model_name == "joint":
+        from models.joint.sepsis_model import JointSepsisModule
+        # Ensure we resolve OmegaConf to pure dict for kwargs
+        imputator_kwargs = OmegaConf.to_container(cfg.model.imputator_kwargs, resolve=True)
+        return JointSepsisModule(
+            imputator_name=cfg.model.imputator_name,
+            imputator_kwargs=imputator_kwargs,
+            d_feature=d_feature,
+            task=cfg.model.get("task", "ihm"),
+            alpha=cfg.model.get("alpha", 0.1),
+            beta=cfg.model.get("beta", 1.0),
+            lr=cfg.model.get("lr", 0.001),
+            obs_bins=cfg.model.get("obs_bins", 6),
+            feature_indices=feature_indices
         )
 
     elif model_name.startswith("timesfm"):
@@ -237,7 +254,8 @@ def main(cfg: DictConfig) -> None:
     logger.info("=" * 60)
 
     # Set seed
-    pl.seed_everything(cfg.seed, workers=True)
+    seed = cfg.get("seed", 42)
+    pl.seed_everything(seed, workers=True)
 
     # Build data module
     masking_cfg = OmegaConf.to_container(cfg.masking, resolve=True)
@@ -249,6 +267,8 @@ def main(cfg: DictConfig) -> None:
         batch_size=data_cfg.get("batch_size", 64),
         num_workers=data_cfg.get("num_workers", 4),
         eval_seed=masking_cfg.get("eval_seed", 42),
+        feature_subset=data_cfg.get("feature_subset", "full"),
+        task=cfg.model.get("task", "ihm"),
     )
 
     # Setup to get dimensions
@@ -262,7 +282,7 @@ def main(cfg: DictConfig) -> None:
                 len(datamodule.val_dataset))
 
     # Build model
-    model = build_model(cfg, d_feature=d_feature, seq_len=seq_len)
+    model = build_model(cfg, d_feature=d_feature, seq_len=seq_len, feature_indices=datamodule.feature_indices)
     logger.info("Model: %s (%d parameters)",
                 cfg.model.name,
                 sum(p.numel() for p in model.parameters()))

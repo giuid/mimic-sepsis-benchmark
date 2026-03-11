@@ -1,0 +1,36 @@
+\section{Methodology: The Sepsis-3 Benchmark}
+\label{sec:methodology}
+
+Our study focuses on the Sepsis-3 clinical benchmark, following the implementation guidelines provided by \cite{huang2025} for the MIMIC-IV v3.1 database. Sepsis is defined as a life-threatening organ dysfunction caused by a dysregulated host response to infection.
+
+\subsection{Sepsis Onset and Data Extraction}
+The sepsis \textit{onset} time is determined by identifying the first instance of a suspected infection (defined by the co-occurrence of antibiotic administration and culture sampling) followed by an increase in the Sequential Organ Failure Assessment (SOFA) score of $\geq 2$ points within a window of 24 hours. 
+
+For each patient in the sepsis cohort ($N=62,325$), we extract a longitudinal trajectory covering a **96-hour window** around the onset (24 hours pre-onset to 72 hours post-onset). Data are aggregated into **4-hour temporal bins**, resulting in sequences of length $T=24$.
+
+\subsection{Task Definitions}
+We evaluate our models on four distinct clinical predictive tasks:
+\begin{enumerate}
+    \item \textbf{In-Hospital Mortality (IHM)}: A static binary classification task predicting whether the patient will die during the current hospital admission based on the first 24 hours of observation ($T=1 \dots 6$).
+    \item \textbf{Remaining Length of Stay (LOS)}: A static regression task estimating the number of days between the end of the 24-hour observation window and the actual ICU discharge.
+    \item \textbf{Septic Shock (SS)}: A dynamic classification task using a sliding window approach. Given the patient's state at time $t$, the model predicts the onset of septic shock (defined by the requirement of vasopressors and high lactate levels) within the subsequent 24 hours.
+    \item \textbf{Vasopressor Requirement (VR)}: A dynamic classification task predicting whether the patient will require norepinephrine-equivalent support in the next 24 hours.
+\end{enumerate}
+
+\subsection{Data Composition and Clinical Cleaning}
+We selected **55 longitudinal features**, including vital signs, hemodynamics, laboratory tests (electrolytes, inflammatory markers, blood gases), neurological scales (GCS, RASS), and clinical interventions (urine output, vasopressor dose, ventilation status). 
+
+\paragraph{Preprocessing.} Following \cite{huang2025}, we applied clinical outlier removal (e.g., heart rate $> 250$ bpm) and normalized the oxygen fraction ($FiO_2$) between 21\% and 100\%. Missing values were handled via patient-wise forward-fill at the tensor level, while the original missingness mask was preserved for Dynamic Knowledge Injection.
+
+\subsection{Deep Gated Knowledge Injection (DGI)}
+To overcome \textit{information saturation} in high-dimensional clinical datasets, we propose the **Deep Gated Injection (DGI)** architecture. Unlike standard input-level knowledge injection, DGI integrates medical knowledge into every layer of the Transformer stack.
+
+\paragraph{Contextual Gating.}
+For each Transformer layer $l$, we compute a dynamic gating tensor $g_l \in [0, 1]^{B \times T \times H}$ that adaptively weights the relative importance of the numerical patient state ($x_l$) and the semantic clinical context ($c_l$):
+\begin{equation}
+    g_l = \text{Sigmoid}(MLP([x_l \parallel c_l]))
+\end{equation}
+\begin{equation}
+    \tilde{x}_l = (1 - g_l) \odot x_l + g_l \odot c_l
+\end{equation}
+This mechanism allows the model to selectively rely on medical priors (e.g., UMLS relations) when numerical signals are sparse or contradictory, effectively regularizing the deep feature extraction process.

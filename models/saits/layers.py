@@ -342,6 +342,109 @@ class DMSABlock(nn.Module):
         return x, imputed, attns
 
 
+class GatedSemanticBlock(nn.Module):
+    def __init__(self, n_layers, n_heads, d_model, d_k, d_v, d_inner, dropout, d_feature, mask_aware: bool = False):
+        super().__init__()
+        self.d_feature = d_feature
+        self.feat_proj = nn.Linear(2, d_model)
+        
+        self.layers = nn.ModuleList([
+            nn.ModuleDict({
+                'temporal': DiagonallyMaskedMultiHeadAttention(n_heads, d_model, d_k, d_v, dropout),
+                'ffn': PointWiseFeedForward(d_model, d_inner, dropout)
+            })
+            for _ in range(n_layers)
+        ])
+        
+        self.output_proj = nn.Linear(d_model, 1)
+        self.feature_gates = nn.ModuleList([FeatureContextualGate(d_model, mask_aware=mask_aware) for _ in range(n_layers)])
+
+    def forward(self, x_feat, feature_embeddings=None):
+        """
+        Args:
+            x_feat: (batch, T, D, 2) or (batch, T, H)
+            feature_embeddings: (batch, T, D, d_model) or (D, d_model)
+        """
+        if x_feat.dim() == 4:
+            # GSL/DGI path: x_feat[:,:,:,1] contains the mask
+            mask = x_feat[:, :, :, 1:2] # [B, T, D, 1]
+            x = self.feat_proj(x_feat)
+        else:
+            # Vanilla path fallback: input is [B, T, H]
+            mask = None
+            x = x_feat.unsqueeze(2) # [B, T, 1, H]
+            
+        B, T, D, H = x.shape
+        
+        # Expand feature_embeddings if they are static (D, H)
+        if feature_embeddings is not None and feature_embeddings.dim() == 2:
+            feature_embeddings = feature_embeddings.unsqueeze(0).unsqueeze(0).expand(B, T, -1, -1)
+
+        for i, layer in enumerate(self.layers):
+            # 1. Temporal Attention (Feature-wise)
+            # x is [B, T, D, H]
+            x_in = x.transpose(1, 2).reshape(B*D, T, H)
+            x_temp, _ = layer['temporal'](x_in, x_in, x_in)
+            x_temp = x_temp.reshape(B, D, T, H).transpose(1, 2)
+            
+            # Residual + Norm
+            x = x + x_temp
+            
+            # 2. Direct Semantic Injection (The "GNN-free" DGI)
+            if feature_embeddings is not None:
+                # Use the Mask-Aware Contextual Gate
+                x = self.feature_gates[i](x, feature_embeddings, mask=mask)
+            
+            # 3. FFN
+            x = x + layer['ffn'](x)
+            
+        imputed = self.output_proj(x).squeeze(-1) # (B, T, D)
+        return x, imputed, None
+
+
+class FeatureContextualGate(nn.Module):
+    """
+    Flexible Contextual Gate.
+    Supports:
+    - DGI v1: Gate(H_time, E_sem)
+    - Mask-Aware DGI: Gate(H_time * M, M, E_sem)
+    """
+    def __init__(self, d_model: int, mask_aware: bool = False):
+        super().__init__()
+        self.mask_aware = mask_aware
+        input_dim = d_model * 2 + 1 if mask_aware else d_model * 2
+        self.gate_net = nn.Sequential(
+            nn.Linear(input_dim, d_model),
+            nn.GELU(),
+            nn.Linear(d_model, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x_temp: torch.Tensor, x_sem: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
+        # Match x_sem dimensions to x_temp (e.g., if x_sem is 3D but x_temp is 4D)
+        if x_sem.dim() < x_temp.dim():
+            x_sem = x_sem.unsqueeze(2) # Add feature dim [B, T, 1, H]
+        if x_sem.dim() == 4 and x_temp.dim() == 4:
+            if x_sem.shape[2] == 1 and x_temp.shape[2] > 1:
+                x_sem = x_sem.expand(-1, -1, x_temp.shape[2], -1)
+
+        if self.mask_aware and mask is not None:
+            # Handle Mask alignment
+            if mask.dim() < x_temp.dim():
+                mask = mask.unsqueeze(-1)
+            if x_temp.dim() == 4 and mask.shape[2] == 1 and x_temp.shape[2] > 1:
+                mask = mask.expand(-1, -1, x_temp.shape[2], -1)
+            
+            # v2: Mask-Aware
+            concat = torch.cat([x_temp * mask, mask, x_sem], dim=-1)
+        else:
+            # v1: Baseline
+            concat = torch.cat([x_temp, x_sem], dim=-1)
+        
+        gate_weight = self.gate_net(concat)
+        return (1.0 - gate_weight) * x_temp + gate_weight * x_sem
+
+
 class GraphDMSABlock(nn.Module):
     """
     SAITS DMSA Block with integrated Spatial-Temporal Attention and Graph Prior.
@@ -364,13 +467,13 @@ class GraphDMSABlock(nn.Module):
         ])
         
         self.output_proj = nn.Linear(d_model, 1)
-        self.gate_param = nn.Parameter(torch.tensor([0.0] * n_layers))
+        self.feature_gates = nn.ModuleList([FeatureContextualGate(d_model) for _ in range(n_layers)])
 
     def get_graph_structure(self):
         """Return list of learned adjacency matrices from all spatial layers."""
         return [layer['spatial'].A_learn for layer in self.layers]
 
-    def forward(self, x_feat, P, feature_embeddings=None):
+    def forward(self, x_feat, P=None, feature_embeddings=None):
         """
         Args:
             x_feat: (batch, T, D, 2) - concatenated values and masks
@@ -400,9 +503,8 @@ class GraphDMSABlock(nn.Module):
                 # Spatial
                 x_space_out = layer['spatial'](x, P)
                 
-                # Gate Fusion
-                alpha = torch.sigmoid(self.gate_param[i])
-                x_combined = (1 - alpha) * x_temp_out + alpha * x_space_out
+                # Gate Fusion via FeatureContextualGate
+                x_combined = self.feature_gates[i](x_temp_out, x_space_out)
                 
                 # FFN
                 x = layer['ffn'](x_combined)

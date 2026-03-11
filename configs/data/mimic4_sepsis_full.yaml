@@ -1,0 +1,158 @@
+# MIMIC-IV Sepsis Benchmark Configuration (FULL ALIGNMENT with yongh7/MIMIC-sepsis)
+mimic_root: "${oc.env:HOME}/Data/indus_data/physionet.org/files/mimiciv/3.1"
+processed_dir: "data/processed_sepsis_full"
+
+# Feature categories with ItemIDs (lists supported for multiple sources)
+vitals:
+  heart_rate: [220045]
+  sbp: [220179, 225309, 220050, 227243, 224167]
+  dbp: [225310, 224643, 227242, 220051, 220180]
+  mbp: [220181, 220052, 225312, 224322]
+  respiratory_rate: [220210, 224422, 224690]
+  spo2: [220277, 220227]
+  temperature: [223762, 223761, 224027] # Celsius, Fahrenheit, NA
+
+hemodynamics:
+  cvp: [220074]
+  pap_systolic: [220059]
+  pap_diastolic: [220060]
+  pap_mean: [220061]
+  cardiac_index: [228368, 228177]
+
+labs:
+  glucose: [225664, 220621, 226537, 50931, 50809]
+  lactate: [50813, 225668] # lactate + lactic_acid
+  creatinine: [220615, 229761, 51081, 50912]
+  bilirubin: [225690, 50885, 51464]
+  platelets: [227457, 51265]
+  wbc: [220546, 51301, 51300]
+  fio2: [223835]
+  ph: [223830, 50820]
+  pao2: [220224, 50821]
+  paco2: [220235, 50818]
+  potassium: [227442, 227464, 50971, 50822]
+  sodium: [220645, 226534, 50983, 50824]
+  chloride: [220602, 226536, 50806, 50902]
+  magnesium: [220635, 50960]
+  calcium: [225625, 225667, 50808, 50893]
+  total_co2: [50804]
+  ast: [220587, 50878]
+  alt: [220644, 50861]
+  total_protein: [220650, 50976]
+  albumin: [227456, 50862]
+  troponin: [227429, 51003]
+  crp: [227444, 50889]
+  hemoglobin: [220228, 51222, 50811]
+  hematocrit: [220545, 226540, 50810, 51221]
+  red_blood_cells: [51279]
+  pt: [227465, 51274]
+  ptt: [227466, 51275]
+  inr: [227467, 51237]
+  hco3: [227443]
+  urea_nitrogen: [51006]
+
+neurological:
+  gcs: [226755, 227013, 220739, 223900, 223901]
+  richmond_ras: [228096]
+
+respiratory_meta:
+  oxygen_flow: [223834, 227287, 224691]
+  oxygen_flow_device: [226732]
+  peep: [220339, 224700]
+  tidal_volume: [224686, 224684, 224421]
+  minute_volume: [224687]
+  mean_airway_pressure: [224697]
+  peak_inspiratory_pressure: [224695]
+  plateau_pressure: [224696]
+
+# INTERVENTI CLINICI
+treatments:
+  vasopressors:
+    norepinephrine: [221906]
+    epinephrine: [221289]
+    vasopressin: [222315]
+    phenylephrine: [221749]
+    dopamine: [221662]
+  ventilation:
+    - 223848 # Ventilator Type
+  fluids:
+    - 225158 # NaCl 0.9%
+    - 225828 # LR
+    - 225943 # Solution
+
+# Parametri Sepsis-3
+icu_window_hours: 96
+min_stay_hours: 12
+sepsis:
+  lead_time_hours: 6
+  min_stay_hours: 48
+  max_stay_hours: 500
+  obs_window_start_rel: -24 
+  obs_window_end_rel: 72    
+
+# Feature names (used for final matrix order)
+feature_names:
+  - heart_rate
+  - sbp
+  - dbp
+  - mbp
+  - respiratory_rate
+  - spo2
+  - temperature
+  - cvp
+  - pap_systolic
+  - pap_diastolic
+  - pap_mean
+  - cardiac_index
+  - glucose
+  - lactate
+  - creatinine
+  - bilirubin
+  - platelets
+  - wbc
+  - fio2
+  - ph
+  - pao2
+  - paco2
+  - potassium
+  - sodium
+  - chloride
+  - magnesium
+  - calcium
+  - total_co2
+  - ast
+  - alt
+  - total_protein
+  - albumin
+  - troponin
+  - crp
+  - hemoglobin
+  - hematocrit
+  - red_blood_cells
+  - pt
+  - ptt
+  - inr
+  - hco3
+  - urea_nitrogen
+  - gcs
+  - richmond_ras
+  - oxygen_flow
+  - peep
+  - tidal_volume
+  - minute_volume
+  - mean_airway_pressure
+  - peak_inspiratory_pressure
+  - plateau_pressure
+  - urine_output
+  - norepi_equiv
+  - fluid_volume
+  - vent_status
+
+# AGGREGAZIONE TEMPORALE (4h)
+time_step_hours: 4
+feature_subset: "full"
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  seed: 42

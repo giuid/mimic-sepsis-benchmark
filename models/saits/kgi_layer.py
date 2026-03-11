@@ -72,10 +72,15 @@ class DynamicKnowledgeInjector(nn.Module):
             
             if not embs:
                 return torch.zeros(B, T, self.hidden_dim, device=device)
+            
+            # CRITICAL FIX: L2 Normalize embeddings to ensure directional similarity
+            import torch.nn.functional as F
+            embs_tensor = torch.stack(embs).to(device)
+            embs_tensor = F.normalize(embs_tensor, p=2, dim=-1)
                 
             self._rel_cache = {
                 "indices": list(variable_indices),
-                "embeddings": torch.stack(embs).to(device),
+                "embeddings": embs_tensor,
                 "f_i": torch.tensor(f_idx_i, device=device),
                 "f_j": torch.tensor(f_idx_j, device=device)
             }

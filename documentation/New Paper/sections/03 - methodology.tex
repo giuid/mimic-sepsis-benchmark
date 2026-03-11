@@ -1,0 +1,64 @@
+\section{Methodology}
+\label{sec:methodology}
+
+This section details the dataset construction, task definitions, and the architectural design of our proposed models, with a focus on the integration of medical knowledge via Deep Gated Injection.
+
+\subsection{Cohort Selection and Sepsis-3 Onset Identification}
+\label{subsec:cohort}
+Our study follows the standard Sepsis-3 definition, identifying patients with life-threatening organ dysfunction caused by a dysregulated host response to infection. We extract our cohort from the MIMIC-IV v3.1 database using a multi-stage process:
+
+\begin{enumerate}
+    \item \textbf{Infection Identification}: We identify patients with suspected infection (SI) by locating the co-occurrence of antibiotic administration and body fluid cultures, following the logic of Singer et al. (2016).
+    \item \textbf{Dynamic SOFA Scoring}: For all SI-positive stays, we calculate hourly Sequential Organ Failure Assessment (SOFA) scores across six physiological systems (respiratory, cardiovascular, hepatic, coagulation, neurological, and renal).
+    \item \textbf{Sepsis-3 Onset}: The \textit{onset time} is defined as the first hour where the total SOFA score increases by $\ge 2$ points within a 24-hour window relative to the SI time. This precise chronological anchoring ensures that our predictive tasks are clinically relevant and not biased by fixed ICU admission times.
+\end{enumerate}
+
+The final cohort consists of approximately 65,000 unique ICU stays. For each stay, we extract a 48-hour longitudinal record starting from the onset time, aggregated into 4-hour bins ($T=12$).
+
+\subsection{Multivariate Clinical Features and Interventions}
+\label{subsec:features}
+We represent each patient-state using 55 clinical variables. These are categorized into:
+\begin{itemize}
+    \item \textbf{Physiological Signals (12)}: Continuous vital signs including Heart Rate, MAP, and Temperature.
+    \item \textbf{Laboratory Results (39)}: Intermittent measurements such as Lactate, Creatinine, Bilirubin, and Blood Gas values (pH, $PaO_2$, $PaCO_2$).
+    \item \textbf{Clinical Interventions (4)}: High-impact treatments extracted from the \textit{inputevents} and \textit{outputevents} tables: Norepinephrine equivalent dosage, total Fluid Volume, Ventilation status, and Urine Output.
+\end{itemize}
+These interventions are critical not only as predictive features but also as the primary ground-truth signal for our dynamic tasks (\textbf{Septic Shock} and \textbf{Vasopressor Requirement}), which are defined based on the future requirement of these supports after the initial 24-hour observation window.
+
+
+\subsection{Missingness Awareness and Input Representation}
+\label{subsec:missingness}
+To ensure the models are explicitly aware of the data distribution and gaps, we adopt a dual-input representation. At each time step $t$, the input vector $X_t \in \mathbb{R}^{2D}$ is constructed by concatenating the raw clinical values $V_t \in \mathbb{R}^D$ with a binary observation mask $M_t \in \{0, 1\}^D$:
+\begin{equation}
+    X_t = [V_t; M_t]
+\end{equation}
+where $M_{t,d} = 1$ if the $d$-th feature is observed at time $t$, and $M_{t,d} = 0$ otherwise. This representation is maintained during both training and evaluation phases. For the DGI and DKI models, this mask is critical as it informs the \textbf{Contextual Gate} about which features are missing, allowing the model to dynamically shift its focus toward the medical knowledge embeddings (SapBERT/MedBERT) when the corresponding clinical signal is absent.
+
+\subsection{Predictive Tasks}
+\label{subsec:tasks}
+We evaluate our models on four critical clinical tasks:
+\begin{enumerate}
+    \item \textbf{In-Hospital Mortality (IHM)}: Static binary classification predicting survival at the end of the hospital stay based on the first 48h of data.
+    \item \textbf{Septic Shock (SS)}: Dynamic classification predicting the onset of septic shock in the subsequent window.
+    \item \textbf{Vasopressor Requirement (VR)}: Dynamic prediction of whether the patient will require vasopressor support.
+    \item \textbf{Length of Stay (LOS)}: Regression task predicting the remaining days in the ICU.
+\end{enumerate}
+
+\subsection{Model Architectures}
+\label{subsec:architectures}
+We compare two primary backbones:
+\begin{itemize}
+    \item \textbf{TimeSeries Transformer}: A standard attention-based encoder for sequence modeling.
+    \item \textbf{SAITS (Joint Learning)}: A dual-attention architecture optimized for multivariate time-series imputation and prediction. SAITS explicitly models missing values, which are prevalent in the 55-feature Sepsis dataset.
+\end{itemize}
+
+\subsection{Knowledge Injection Strategies}
+\label{subsec:kgi}
+The core contribution of our work is the integration of medical semantics via the Unified Medical Language System (UMLS). We utilize pre-trained **SapBERT** and **MedBERT** embeddings to encode relationships between the 55 clinical variables.
+
+\paragraph{Domain Knowledge Injection (DKI)}: An early-fusion approach where semantic embeddings are concatenated or summed with numerical features at the input layer.
+\paragraph{Deep Gated Injection (DGI)}: A novel layer-wise fusion mechanism. In each Transformer or SAITS block, a \textbf{Contextual Gate} (Sigmoid-based) dynamically weights the importance of medical knowledge:
+\begin{equation}
+    H_{out} = (1 - \sigma(W[H_{time}; E_{sem}])) \cdot H_{time} + \sigma(W[H_{time}; E_{sem}]) \cdot E_{sem}
+\end{equation}
+where $H_{time}$ is the latent temporal state and $E_{sem}$ is the semantic prior. This allows the model to "fallback" on medical theory when clinical data is missing or noisy.

@@ -1,0 +1,25 @@
+# configs/model/joint.yaml
+name: "joint"
+seed: 42
+imputator_name: "saits"
+d_feature: 55
+task: "ihm"
+alpha: 0.1
+beta: 1.0
+pos_weight: 1.0
+lr: 0.001
+weight_decay: 0.0001
+obs_bins: 6
+
+imputator_kwargs:
+  n_steps: 24
+  n_features: 55
+  n_layers: 2
+  d_model: 64
+  d_inner: 128
+  n_head: 8
+  d_k: 8
+  d_v: 8
+  dropout: 0.1
+  use_kgi: false
+  kgi_embedding_file: "data/embeddings/medbert_relation_embeddings_sepsis_full.pkl"

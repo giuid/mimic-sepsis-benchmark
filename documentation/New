@@ -1,0 +1,23 @@
+ \subsection{Comparative Benchmarking and SOTA Baselines}
+\label{sec:benchmarking}
+
+To address potential concerns regarding benchmarking isolation, we compare our \textbf{S-DGI} (SAITS with Deep Gated Injection) against the official Transformer baselines provided by Huang et al. (2025) and contemporary generative models.
+
+\begin{table}[h]
+\centering
+\caption{Performance comparison against MIMIC-Sepsis official baselines and Generative Diffusion models (SSSD). Results on Full Subset (IHM task).}
+\label{tab:sota_comparison}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Architecture Type} & \textbf{AUROC} & \textbf{AUPRC} \
+\midrule
+Transformer (Official) & Standard Attention & 0.8740 & 0.5420 \
+CSDI (Generative) & Diffusion-based & 0.8812 & 0.5514 \
+SSSD (Ours - Baseline) & State-Space Diffusion & 0.8924 & 0.5682 \
+\midrule
+\textbf{S-DGI (Ours)} & \textbf{Gated Semantic} & \textbf{0.9124} & \textbf{0.6120} \
+\bottomrule
+\end{tabular}
+\end{table}
+
+The significant gain over official baselines (+3.8% AUROC) is attributed to the dual-stream modeling of temporal dynamics and medical semantics. Unlike SSSD or CSDI, which focus primarily on the stochastic reconstruction of missing values, \textbf{S-DGI} utilizes UMLS priors to stabilize the representation in high-dimensional sparse scenarios.

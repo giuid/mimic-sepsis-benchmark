@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from torchmetrics.classification import BinaryAUROC, BinaryAveragePrecision
 import os
 import pickle
+import pandas as pd
 
 from metrics.imputation import mae
 from models.saits.kgi_layer import DynamicKnowledgeInjector

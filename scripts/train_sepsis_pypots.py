@@ -42,7 +42,7 @@ def main():
         "n_layers": 2,
         "d_model": 64,
         "d_inner": 128,
-        "n_head": 4,
+        "n_heads": 4,
         "d_k": 16,
         "d_v": 16,
         "dropout": 0.1,
@@ -57,7 +57,7 @@ def main():
     # KGI Injection
     if args.kgi:
         imputator_kwargs["use_kgi"] = True
-        imputator_kwargs["kgi_embedding_file"] = "data/embeddings/medbert_relation_embeddings_sepsis.pkl"
+        imputator_kwargs["kgi_embedding_file"] = "medbert_relation_embeddings_sepsis.pkl"
 
     # 3. Instantiate Joint Model
     model = JointSepsisModule(

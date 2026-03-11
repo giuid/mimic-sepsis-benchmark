@@ -33,7 +33,7 @@ class LSTMModel(nn.Module):
         )
         
         if task_type == 'classification':
-            self.output_activation = nn.Sigmoid()
+            self.output_activation = nn.Identity()
         else:
             self.output_activation = nn.Identity()
     
@@ -47,8 +47,9 @@ class LSTMModel(nn.Module):
         return self.output_activation(output).squeeze()
     
     def fit(self, X: np.ndarray, y: np.ndarray, batch_size: int = 32, epochs: int = 10, 
-            learning_rate: float = 0.001, random_state: int = None):
-        """Train the LSTM model"""
+            learning_rate: float = 0.001, random_state: int = None, pos_weight: float = None,
+            validation_data=None):
+        """Train the LSTM model with optional validation-based early stopping."""
         self.to(self.device)
         
         # Set random seed for reproducibility if provided
@@ -69,11 +70,33 @@ class LSTMModel(nn.Module):
         dataset = TensorDataset(X_tensor, y_tensor)
         dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
         
+        # Prepare validation data if provided
+        val_dataloader = None
+        if validation_data is not None:
+            X_val, y_val = validation_data
+            val_dataset = TensorDataset(
+                torch.FloatTensor(X_val),
+                torch.FloatTensor(y_val)
+            )
+            val_dataloader = DataLoader(val_dataset, batch_size=batch_size)
+        
         # Initialize optimizer and loss function
         optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
-        criterion = nn.BCELoss() if self.task_type == 'classification' else nn.MSELoss()
+        if self.task_type == 'classification':
+            if pos_weight is not None:
+                pw_tensor = torch.tensor([pos_weight], device=self.device)
+                criterion = nn.BCEWithLogitsLoss(pos_weight=pw_tensor)
+            else:
+                criterion = nn.BCEWithLogitsLoss()
+        else:
+            criterion = nn.MSELoss()
         
-        # Training loop
+        # Training loop with early stopping
+        best_val_loss = float('inf')
+        patience = 10
+        patience_counter = 0
+        best_model_state = None
+        
         self.train()
         for epoch in range(epochs):
             total_loss = 0
@@ -92,8 +115,44 @@ class LSTMModel(nn.Module):
                 
                 total_loss += loss.item()
             
-            if (epoch + 1) % 5 == 0:
+            # Validation if data provided
+            if val_dataloader is not None:
+                val_loss = self._validate(val_dataloader, criterion)
+                print(f'Epoch [{epoch+1}/{epochs}], Loss: {total_loss/len(dataloader):.4f}, Val Loss: {val_loss:.4f}')
+                
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    best_model_state = {k: v.cpu().clone() for k, v in self.state_dict().items()}
+                    patience_counter = 0
+                else:
+                    patience_counter += 1
+                    
+                if patience_counter >= patience:
+                    print(f"Early stopping triggered at epoch {epoch+1}")
+                    if best_model_state is not None:
+                        self.load_state_dict(best_model_state)
+                        self.to(self.device)
+                    break
+            elif (epoch + 1) % 5 == 0:
                 print(f'Epoch [{epoch+1}/{epochs}], Loss: {total_loss/len(dataloader):.4f}')
+        
+        if val_dataloader is not None and best_model_state is not None:
+            self.load_state_dict(best_model_state)
+            self.to(self.device)
+    
+    def _validate(self, val_dataloader, criterion):
+        """Run validation and return validation loss."""
+        self.eval()
+        total_val_loss = 0
+        with torch.no_grad():
+            for batch_X, batch_y in val_dataloader:
+                batch_X = batch_X.to(self.device)
+                batch_y = batch_y.to(self.device)
+                outputs = self(batch_X)
+                loss = criterion(outputs, batch_y)
+                total_val_loss += loss.item()
+        self.train()
+        return total_val_loss / len(val_dataloader)
     
     def predict(self, X: np.ndarray, batch_size: int = 32) -> np.ndarray:
         """Generate predictions using the trained model"""
@@ -110,6 +169,9 @@ class LSTMModel(nn.Module):
             for batch_X, in dataloader:
                 batch_X = batch_X.to(self.device)
                 outputs = self(batch_X)
+                
+                if self.task_type == 'classification':
+                    outputs = torch.sigmoid(outputs)
                 
                 # Ensure outputs are properly shaped before converting to numpy
                 # If we have a single sample, make sure it's still a 1D array

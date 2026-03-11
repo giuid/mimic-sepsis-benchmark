@@ -1,6 +1,6 @@
 # MIMIC-IV data configuration
 mimic_root: "${oc.env:HOME}/Data/indus_data/physionet.org/files/mimiciv/3.1"
-processed_dir: "data/processed_sota"
+processed_dir: "data/processed_sepsis_full"
 
 # ICU features (17 variables SOTA)
 vitals:
@@ -50,6 +50,7 @@ feature_names:
 # Temporal window
 icu_window_hours: 48
 time_step_hours: 1
+feature_subset: "full"
 min_stay_hours: 24  # SOTA: at least 24h
 min_coverage: 0.0   # handled by "at least one" rule in preprocess
 

@@ -1,0 +1,27 @@
+# SSSD for Sepsis-3 Benchmark (55 features)
+name: sssd_sepsis
+
+# Architecture (Scaled for 55 features)
+residual_layers: 8
+residual_channels: 128
+skip_channels: 128
+diffusion_embedding_dim: 128
+
+# S4 config
+s4:
+  state_dim: 128
+  dropout: 0.2
+  bidirectional: true
+  layer_norm: true
+
+# Diffusion
+diffusion:
+  T: 200
+  beta_start: 1.0e-4
+  beta_end: 0.02
+  schedule: linear
+  inference_steps: 20
+
+# Input dimensions will be dynamically set to 55 in train.py or data config
+n_features: 55
+n_steps: 24 # 96h window / 4h bins = 24 steps

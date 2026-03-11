@@ -61,6 +61,7 @@ class SAITSModule(pl.LightningModule):
         weight_decay: float = 0,
         embedding_type: str = "vanilla",
         use_kgi: bool = False,
+        kgi_mode: str = "dki", # 'dki' (input), 'dgi' (layer v1), 'dgi_mask' (layer v2)
         task_type: str = "binary",
         pos_weight: float = 5.5,
         obs_steps: int = 2, # First 8h (2 bins of 4h) for prediction
@@ -76,16 +77,33 @@ class SAITSModule(pl.LightningModule):
         self.obs_steps = obs_steps
         self.imp_weight = imp_weight
         self.task_type = task_type
+        self.kgi_mode = kgi_mode
         
-        # GSL Logic
+        # Mask-Aware logic (for DGI v2)
+        self.mask_aware = (kgi_mode == "dgi_mask")
+        
+        # GSL Logic: Use GraphDMSABlock if graph prior is requested
         self.use_graph_prior = (embedding_type != "vanilla")
         
         # Layers
         self.input_proj = nn.Linear(d_feature * 2, d_model)
         self.pos_encoding = PositionalEncoding(d_model, max_len=seq_len)
         
-        block_kwargs = {"n_layers": n_layers, "n_heads": n_heads, "d_model": d_model, "d_k": d_k, "d_v": d_v, "d_inner": d_inner, "dropout": dropout, "d_feature": d_feature}
-        block_class = GraphDMSABlock if self.use_graph_prior else DMSABlock
+        block_kwargs = {
+            "n_layers": n_layers, "n_heads": n_heads, "d_model": d_model, 
+            "d_k": d_k, "d_v": d_v, "d_inner": d_inner, "dropout": dropout, 
+            "d_feature": d_feature, "mask_aware": self.mask_aware
+        }
+        
+        # Architecture Selection
+        if "dgi" in self.kgi_mode:
+            from models.saits.layers import GatedSemanticBlock
+            block_class = GatedSemanticBlock # NO GNN, direct injection
+        elif self.use_graph_prior:
+            block_class = GraphDMSABlock
+        else:
+            block_class = DMSABlock
+            
         self.dmsa_block_1 = block_class(**block_kwargs)
         self.dmsa_block_2 = block_class(**block_kwargs)
         self.combining_weight = nn.Linear(d_feature, d_feature)
@@ -93,13 +111,32 @@ class SAITSModule(pl.LightningModule):
         # KGI
         self.use_kgi = use_kgi
         if self.use_kgi:
-            from models.saits.kgi_layer import KGIFusionLayer
+            import os
+            import pickle
+            from models.saits.kgi_layer import KGIFusionLayer, DynamicKnowledgeInjector
+            
             kgi_file = kwargs.get("kgi_embedding_file", "medbert_relation_embeddings_sepsis.pkl")
-            with open(os.path.expanduser(f"~/Code/charite/baselines/data/embeddings/{kgi_file}"), 'rb') as f:
+            
+            # Robust Path Logic
+            base_path = os.getcwd() 
+            if kgi_file.startswith("data/"):
+                kgi_path = os.path.join(base_path, kgi_file)
+            else:
+                kgi_path = os.path.join(base_path, "data/embeddings", kgi_file)
+            
+            with open(kgi_path, 'rb') as f:
                 self.medbert_dict = pickle.load(f)
-            vocab = pd.read_csv(os.path.expanduser("~/Code/charite/baselines/data/embeddings/mimic_vocab_mapped.csv"))
-            self.kgi_itemids = vocab['itemid'].tolist()[:d_feature]
+            
+            vocab_path = os.path.join(base_path, "data/embeddings/mimic_vocab_mapped.csv")
+            vocab = pd.read_csv(vocab_path)
+            self.kgi_itemids = vocab['itemid'].tolist()
+            
+            # Input-level Fusion (used in DKI mode)
             self.kgi_fusion = KGIFusionLayer(hidden_dim=d_model)
+            
+            # Layer-level Injector (used in DGI mode)
+            if self.kgi_mode == "dgi":
+                self.kgi_injector = DynamicKnowledgeInjector(text_embed_dim=768, hidden_dim=d_model)
 
         # Flexible Classification/Regression Head
         self.classifier = DownstreamClassifier(input_dim=d_model * 2, hidden_dim=d_inner, task_type=task_type)
@@ -119,20 +156,39 @@ class SAITSModule(pl.LightningModule):
         data, input_mask = batch["data"], batch["input_mask"]
         surviving_mask = input_mask.bool() & (~batch.get("artificial_mask", torch.zeros_like(input_mask)).bool())
 
-        x = self.pos_encoding(self.input_proj(torch.cat([data * input_mask, input_mask], dim=-1)))
+        # 1. Project input
+        # Feature-wise stack: (B, T, D, 2)
+        x_feat = torch.stack([data * input_mask, input_mask], dim=-1)
+        x_proj = self.pos_encoding(self.input_proj(torch.cat([data * input_mask, input_mask], dim=-1)))
+        
+        # 2. Knowledge Injection context
+        feature_embeddings = None
         if self.use_kgi:
-            x = self.kgi_fusion(x, surviving_mask, self.medbert_dict, self.kgi_itemids)
+            if self.kgi_mode == "dki":
+                # Apply fusion once at the input level
+                x_proj = self.kgi_fusion(x_proj, surviving_mask, self.medbert_dict, self.kgi_itemids)
+            elif self.kgi_mode == "dgi":
+                # Generate embeddings context using current temporal projections
+                # feature_embeddings: (B, T, D, H) based on MedBERT/SapBERT logic
+                feature_embeddings = self.kgi_injector(x_proj, surviving_mask, self.medbert_dict, self.kgi_itemids)
 
-        if self.use_graph_prior:
-            # GNN path
-            h1, imp1, _ = self.dmsa_block_1(torch.stack([data * input_mask, input_mask], dim=-1))
+        # 3. Blocks execution
+        if "dgi" in self.kgi_mode:
+            # DGI Path (Gated Semantic Injection - supports both v1 and v2/mask)
+            h1, imp1, _ = self.dmsa_block_1(x_feat, feature_embeddings=feature_embeddings)
+            x_replaced = data * input_mask + imp1 * (1 - input_mask)
+            x_feat_2 = torch.stack([x_replaced, input_mask], dim=-1)
+            h2, imp2, _ = self.dmsa_block_2(x_feat_2, feature_embeddings=feature_embeddings)
+        elif self.use_graph_prior:
+            # GNN Path
+            h1, imp1, _ = self.dmsa_block_1(x_feat)
             x_replaced = data * input_mask + imp1 * (1 - input_mask)
             h2, imp2, _ = self.dmsa_block_2(torch.stack([x_replaced, input_mask], dim=-1))
         else:
-            # Vanilla path
-            h1, imp1, _ = self.dmsa_block_1(x)
-            x2 = self.pos_encoding(self.input_proj(torch.cat([data * input_mask + imp1 * (1 - input_mask), input_mask], dim=-1)))
-            h2, imp2, _ = self.dmsa_block_2(x2)
+            # Vanilla SAITS Path
+            h1, imp1, _ = self.dmsa_block_1(x_proj)
+            x_proj_2 = self.pos_encoding(self.input_proj(torch.cat([data * input_mask + imp1 * (1 - input_mask), input_mask], dim=-1)))
+            h2, imp2, _ = self.dmsa_block_2(x_proj_2)
 
         imp3 = self.combining_weight((imp1 + imp2) / 2.0)
         imp3 = data * input_mask + imp3 * (1 - input_mask)
