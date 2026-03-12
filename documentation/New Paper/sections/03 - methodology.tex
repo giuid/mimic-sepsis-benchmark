@@ -54,11 +54,16 @@ We compare two primary backbones:
 
 \subsection{Knowledge Injection Strategies}
 \label{subsec:kgi}
-The core contribution of our work is the integration of medical semantics via the Unified Medical Language System (UMLS). We utilize pre-trained **SapBERT** and **MedBERT** embeddings to encode relationships between the 55 clinical variables.
+We propose three incremental strategies for integrating medical semantics from the Unified Medical Language System (UMLS) into clinical time-series backbones.
 
-\paragraph{Domain Knowledge Injection (DKI)}: An early-fusion approach where semantic embeddings are concatenated or summed with numerical features at the input layer.
-\paragraph{Deep Gated Injection (DGI)}: A novel layer-wise fusion mechanism. In each Transformer or SAITS block, a \textbf{Contextual Gate} (Sigmoid-based) dynamically weights the importance of medical knowledge:
+\paragraph{Domain Knowledge Injection (DKI)}: An early-fusion baseline where pre-trained SapBERT/MedBERT embeddings are concatenated with the input features. This provides a static semantic prior but risks information dilution in deep layers.
+
+\paragraph{Deep Gated Injection v1 (DGI-Implicit)}: A layer-wise injection mechanism where medical knowledge is infused into every block of the Transformer or SAITS backbone. The fusion is controlled by a Contextual Gate $\sigma(W[H_{time}; E_{sem}])$. While dynamic, this version relies on the model's ability to preserve missingness information within the latent state $H_{time}$.
+
+\paragraph{Deep Gated Injection v2 (DGI-Mask-Aware)}: Our primary proposed architecture. In response to potential "paralysis" under high missingness, we explicitly inject the binary observation mask $M_{time}$ into every gate at every layer. The gating function is reformulated as:
 \begin{equation}
-    H_{out} = (1 - \sigma(W[H_{time}; E_{sem}])) \cdot H_{time} + \sigma(W[H_{time}; E_{sem}]) \cdot E_{sem}
+    \alpha = \sigma(W[H_{time} \odot M_{time}; M_{time}; E_{sem}])
 \end{equation}
-where $H_{time}$ is the latent temporal state and $E_{sem}$ is the semantic prior. This allows the model to "fallback" on medical theory when clinical data is missing or noisy.
+where $\odot$ denotes element-wise multiplication. This forces the model to mathematically "fallback" on semantic priors exactly when the physical signal is missing ($M_{time}=0$). All embeddings are $L_2$-normalized to preserve the spherical consistency of the SapBERT latent space.
+
+\paragraph{Dummy Semantics Control}: To isolate the contribution of medical meaning from structural complexity, we evaluate a control variant (\textbf{S-Dummy}) where the UMLS dictionary is replaced by random Gaussian noise $\mathcal{N}(0, I)$, maintaining identical gating parameters.
