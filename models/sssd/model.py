@@ -34,18 +34,7 @@ from models.sssd.s4_layer import S4Block
 
 class SSSDResidualLayer(nn.Module):
     """
-    Single SSSD residual layer.
-
-    Processes input through an S4 block with diffusion step conditioning.
-    Produces a residual output and a skip connection output.
-
-    Args:
-        residual_channels: channel dimension for processing
-        skip_channels: channel dimension for skip connection
-        diffusion_embed_dim: dimension of diffusion step embedding
-        s4_state_dim: S4 state dimension
-        s4_dropout: S4 dropout rate
-        seq_len: sequence length
+    Single SSSD residual layer. Supports optional DGI v2 semantic gating.
     """
 
     def __init__(
@@ -56,8 +45,12 @@ class SSSDResidualLayer(nn.Module):
         s4_state_dim: int = 128,
         s4_dropout: float = 0.2,
         seq_len: int = 48,
+        kgi_injector=None,
+        kgi_gate=None
     ):
         super().__init__()
+        self.kgi_injector = kgi_injector
+        self.kgi_gate = kgi_gate
 
         # S4 block
         self.s4_block = S4Block(
@@ -87,16 +80,10 @@ class SSSDResidualLayer(nn.Module):
         self,
         x: torch.Tensor,
         diffusion_emb: torch.Tensor,
+        mask: torch.Tensor = None,
+        medbert_dict: dict = None,
+        kgi_itemids: list = None
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """
-        Args:
-            x: (B, C, L) residual input
-            diffusion_emb: (B, embed_dim) diffusion step embedding
-
-        Returns:
-            residual: (B, C, L) residual output (added to input)
-            skip: (B, skip_C, L) skip connection output
-        """
         h = self.norm(x)
 
         # Add diffusion step conditioning
@@ -106,37 +93,38 @@ class SSSDResidualLayer(nn.Module):
         # S4 processing
         h = self.s4_block(h)
 
+        # --- DGI v2: Optional Semantic Gating ---
+        if self.kgi_gate is not None and self.kgi_injector is not None and medbert_dict is not None:
+            # h is [B, C, T], need [B, T, C] for gate
+            h_time = h.transpose(1, 2)
+            
+            # Retrieve semantic context
+            kgi_context = self.kgi_injector(
+                query_hidden=h_time, 
+                surviving_mask=mask, 
+                precomputed_embeddings=medbert_dict, 
+                variable_indices=kgi_itemids
+            )
+            
+            # Apply Mask-Aware Gating (v2) if enabled, else v1
+            mask_agg = mask.float().mean(dim=-1, keepdim=True) if mask is not None else None
+            h_fused = self.kgi_gate(h_time, kgi_context, mask=mask_agg)
+            
+            h = h_fused.transpose(1, 2)
+
         # Split into residual and skip
         res = self.res_proj(h)
         skip = self.skip_proj(h)
 
-        # Residual connection
-        res = (res + x) / (2 ** 0.5)  # normalize for stability
+        # Residual connection (Original logic preserved)
+        res = (res + x) / (2 ** 0.5)
 
         return res, skip
 
 
 class SSSDDenoiser(nn.Module):
     """
-    SSSD Denoising Network.
-
-    Takes noisy data, observed values, mask, and diffusion timestep,
-    and predicts the added noise.
-
-    Input channels: 2*D + D_mask
-        - D channels for noisy/target data
-        - D channels for observed (conditioning) data
-        - D channels for binary mask
-
-    Args:
-        d_feature: number of time series features D
-        residual_layers: number of residual layers
-        residual_channels: channel dimension
-        skip_channels: skip connection dimension
-        diffusion_embed_dim: diffusion step embedding dim
-        s4_state_dim: S4 state dimension
-        s4_dropout: S4 dropout
-        seq_len: sequence length T
+    SSSD Denoising Network. Supports optional Knowledge Graph Injection.
     """
 
     def __init__(
@@ -150,22 +138,30 @@ class SSSDDenoiser(nn.Module):
         s4_dropout: float = 0.2,
         seq_len: int = 48,
         use_graph_prior: bool = True,
+        use_kgi: bool = False,
+        kgi_mode: str = "dgi_mask",
     ):
         super().__init__()
         self.d_feature = d_feature
+        self.use_kgi = use_kgi
+        
+        # KGI Components (Conditional)
+        if self.use_kgi:
+            from models.saits.layers import FeatureContextualGate
+            from models.saits.kgi_layer import DynamicKnowledgeInjector
+            self.kgi_injector = DynamicKnowledgeInjector(text_embed_dim=768, hidden_dim=residual_channels)
+            self.kgi_gate = FeatureContextualGate(residual_channels, mask_aware=(kgi_mode == "dgi_mask"))
+        else:
+            self.kgi_injector = None
+            self.kgi_gate = None
 
-        # Meta-Path Conditioning support
-        # Activated only if requested AND feature count matches SOTA (17)
         self.use_graph_prior = use_graph_prior and (d_feature == 17)
         input_dim_multiplier = 4 if self.use_graph_prior else 3
         
-        # Input projection: (noisy_data + observed + mask [+ graph_obs]) → residual_channels
         self.input_proj = nn.Conv1d(d_feature * input_dim_multiplier, residual_channels, kernel_size=1)
-
-        # Diffusion step embedding
         self.diffusion_embedding = DiffusionStepEmbedding(diffusion_embed_dim)
 
-        # Residual layers
+        # Residual layers (passing KGI references if enabled)
         self.residual_layers = nn.ModuleList([
             SSSDResidualLayer(
                 residual_channels=residual_channels,
@@ -174,11 +170,12 @@ class SSSDDenoiser(nn.Module):
                 s4_state_dim=s4_state_dim,
                 s4_dropout=s4_dropout,
                 seq_len=seq_len,
+                kgi_injector=self.kgi_injector,
+                kgi_gate=self.kgi_gate
             )
             for _ in range(residual_layers)
         ])
 
-        # Output projection: skip_channels → D (predict noise for each feature)
         self.output_proj = nn.Sequential(
             nn.GroupNorm(8, skip_channels),
             nn.GELU(),
@@ -187,7 +184,6 @@ class SSSDDenoiser(nn.Module):
             nn.Conv1d(skip_channels, d_feature, kernel_size=1),
         )
 
-        # Initialize final layer to zero for stable training
         nn.init.zeros_(self.output_proj[-1].weight)
         nn.init.zeros_(self.output_proj[-1].bias)
 
@@ -198,51 +194,33 @@ class SSSDDenoiser(nn.Module):
         observed: torch.Tensor,
         mask: torch.Tensor,
         M: torch.Tensor = None,
+        medbert_dict: dict = None,
+        kgi_itemids: list = None
     ) -> torch.Tensor:
-        """
-        Predict noise ε from noisy input.
-
-        Args:
-            x_noisy:  (B, T, D) noisy time series (noise on imputation targets)
-            t:        (B,) diffusion timestep
-            observed: (B, T, D) observed values (conditioning)
-            mask:     (B, T, D) 1=observed, 0=to impute
-            M:        (D, D) Meta-Path prior matrix
-        """
         B, T, D = x_noisy.shape
 
         if self.use_graph_prior and M is not None:
-            # Generate graph-based view of observed data: (B, T, D) @ (D, D) -> (B, T, D)
-            # x_graph[i] = sum_{j} M[i,j] * observed[j]
             x_graph = torch.matmul(observed, M.T)
             x_input = torch.cat([x_noisy, observed, mask, x_graph], dim=-1)
         else:
-            # Concatenate inputs: (noisy, observed, mask) → (B, T, 3D)
             x_input = torch.cat([x_noisy, observed, mask], dim=-1)
 
-        # Reshape to channel-first: (B, C_in, T)
         x_input = x_input.permute(0, 2, 1)
-
-        # Input projection → (B, C, T)
         h = self.input_proj(x_input)
+        diff_emb = self.diffusion_embedding(t)
 
-        # Diffusion step embedding
-        diff_emb = self.diffusion_embedding(t)  # (B, embed_dim)
-
-        # Process through residual layers, accumulate skip connections
         skip_sum = torch.zeros_like(h[:, :self.output_proj[2].in_channels, :])
 
         for layer in self.residual_layers:
-            h, skip = layer(h, diff_emb)
+            # Conditional pass based on use_kgi
+            if self.use_kgi:
+                h, skip = layer(h, diff_emb, mask=mask, medbert_dict=medbert_dict, kgi_itemids=kgi_itemids)
+            else:
+                h, skip = layer(h, diff_emb)
             skip_sum = skip_sum + skip
 
-        # Normalize accumulated skips
         skip_sum = skip_sum / (len(self.residual_layers) ** 0.5)
-
-        # Output projection → (B, D, T)
         out = self.output_proj(skip_sum)
-
-        # Reshape back to (B, T, D)
         predicted_noise = out.permute(0, 2, 1)
 
         return predicted_noise
