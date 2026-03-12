@@ -1,0 +1,5 @@
+model,masking,mae,rmse
+mean,block_L10_N2,0.0945,0.4502
+locf,block_L10_N2,0.0566,0.3638
+linear_interp,block_L10_N2,0.0410,0.1567
+saits,block_L10_N2,0.0439,0.2077

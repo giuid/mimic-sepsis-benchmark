@@ -1,0 +1,2 @@
+model,masking,mae,rmse,mre,r2,corr_err
+timesfm,random_p0.3,0.6247,0.8303,2.2119,0.3085,0.1994

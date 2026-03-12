@@ -1,0 +1,2 @@
+model,setup,masking,mae,rmse,mre,r2,corr_err
+timesfm_sapbert,sota,random_p0.3,0.4403,0.6382,2.2348,0.5915,0.2237

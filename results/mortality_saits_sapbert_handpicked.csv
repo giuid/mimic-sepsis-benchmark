@@ -1,0 +1,2 @@
+model,setup,lgbm_auroc,lgbm_auprc,gru_auroc,gru_auprc,timestamp
+saits_sapbert,handpicked,0.8086008683422002,0.14453931251480742,0.8306472818443099,0.16386204593938317,2026-02-24T17:09:13.685880

@@ -1,0 +1,5 @@
+model,masking,mae,rmse
+mean,random_p0.5,0.0830,1.5851
+locf,random_p0.5,0.0520,1.5807
+linear_interp,random_p0.5,0.0408,1.5829
+saits,random_p0.5,0.0341,1.5733

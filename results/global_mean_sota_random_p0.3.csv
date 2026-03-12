@@ -1,0 +1,2 @@
+model,setup,masking,mae,rmse,mre,r2,corr_err
+mean,sota,random_p0.3,0.7904,0.9985,1.0000,-0.0000,0.0186

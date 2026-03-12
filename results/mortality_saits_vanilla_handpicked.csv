@@ -1,0 +1,2 @@
+model,setup,lgbm_auroc,lgbm_auprc,gru_auroc,gru_auprc,timestamp
+saits_vanilla,handpicked,0.6786497890295359,0.12881303127929497,0.7001687763713079,0.13733447013189928,2026-03-03T12:11:22.375779

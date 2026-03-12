@@ -1,0 +1,5 @@
+model,masking,mae,rmse
+mean,featurewise,0.0872,4.2046
+locf,featurewise,0.0652,4.2022
+linear_interp,featurewise,0.0544,4.2013
+saits,featurewise,0.0460,4.2007

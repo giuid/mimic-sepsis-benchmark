@@ -1,0 +1,2 @@
+model,setup,masking,mae,rmse,mre,r2,corr_err,auroc,auprc
+saits,handpicked,random_p0.3,0.8261,1.0919,2.9365,-0.1940,0.1345,0.7070,0.0678

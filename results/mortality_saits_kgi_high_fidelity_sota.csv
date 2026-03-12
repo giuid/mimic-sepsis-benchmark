@@ -1,0 +1,2 @@
+model,setup,lgbm_auroc,lgbm_auprc,gru_auroc,gru_auprc,timestamp
+saits_kgi_high_fidelity,sota,0.8470062335958005,0.1882595972343024,0.8677055993000874,0.2512702675933282,2026-02-25T14:01:55.840048

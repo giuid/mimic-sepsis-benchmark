@@ -1,0 +1,2 @@
+model,setup,lgbm_auroc,lgbm_auprc,gru_auroc,gru_auprc,timestamp
+timesfm_sapbert,sota,0.8576798993875765,0.17338998803297279,0.9054161198600176,0.25177486311250796,2026-02-24T12:18:15.761821
