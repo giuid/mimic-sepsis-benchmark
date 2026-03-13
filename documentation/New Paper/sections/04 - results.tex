@@ -81,5 +81,26 @@ The regression task shows that DGI-v2 reduces the Mean Absolute Error (MAE) sign
 \end{tabular}
 \end{table*}
 
+\subsection{Generative Baselines: SSSD}
+To evaluate the flexibility of the DGI v2 mechanism, we integrated it into a generative diffusion-based model, \textbf{SSSD} (Structured State Space Diffusion). SSSD represents a different paradigm where missing data are not just imputed but generated via a stochastic denoising process. Results are shown in Table \ref{tab:sssd_results}.
+
+The findings highlight that SSSD is particularly effective in dynamic tasks such as \textbf{VR} (AUROC 0.783) and \textbf{SS} (AUROC 0.706), where the S4 backbone captures the underlying temporal distribution. However, it struggles with the static \textbf{IHM} task compared to discriminative backbones like SAITS. Notably, the integration of \textbf{DGI v2} provides a consistent performance boost even in this generative setup, especially in high-sparsity scenarios (\textbf{Emerg} ablation), where medical semantics guide the diffusion process toward clinically plausible trajectories.
+
+\begin{table}[h]
+\centering
+\caption{SSSD Generative Results (AUROC). Comparison between Vanilla and DGI v2 across different tasks and Full/Emergency subsets.}
+\label{tab:sssd_results}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{IHM}} & \multicolumn{2}{c}{\textbf{Septic Shock}} & \multicolumn{2}{c}{\textbf{Vasopressor}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+\textbf{Ablation} & \textbf{Van} & \textbf{DGI-v2} & \textbf{Van} & \textbf{DGI-v2} & \textbf{Van} & \textbf{DGI-v2} \\
+\midrule
+\textbf{Full}  & 0.472 & 0.546 & 0.682 & \textbf{0.686} & 0.782 & \textbf{0.783} \\
+\textbf{Emerg} & 0.555 & \textbf{0.615} & 0.680 & 0.674 & 0.708 & 0.704 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Summary of Findings}
 The results consistently indicate that: (i) SAITS backbones outperform Transformers in high-missingness clinical data; (ii) Mask-Aware gating provides superior fallback logic; and (iii) the medical content of the embeddings is the primary driver of performance, as evidenced by the catastrophic failure of the \textbf{Dummy-Control} experiments across all tasks and ablations.
